@@ -7,6 +7,7 @@ import com.mauromarod.spaceflightnews.core.domain.model.ArticleNotFoundException
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.CrashReporter
+import com.mauromarod.spaceflightnews.core.domain.repository.RemoteConfigRepository
 import com.mauromarod.spaceflightnews.core.domain.usecase.GetArticleDetailUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,6 +31,7 @@ class DetailViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var repository: ArticleRepository
+    private lateinit var remoteConfig: RemoteConfigRepository
     private lateinit var useCase: GetArticleDetailUseCase
     private val analyticsRepository: AnalyticsRepository = mockk(relaxed = true)
     private val crashReporter: CrashReporter = mockk(relaxed = true)
@@ -48,8 +50,9 @@ class DetailViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        repository = mockk()
-        useCase = GetArticleDetailUseCase(repository)
+        repository = mockk(relaxed = true)
+        remoteConfig = mockk(relaxed = true)
+        useCase = GetArticleDetailUseCase(repository, remoteConfig)
     }
 
     @After

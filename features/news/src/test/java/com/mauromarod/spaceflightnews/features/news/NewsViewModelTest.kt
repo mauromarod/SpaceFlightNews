@@ -1,18 +1,17 @@
 package com.mauromarod.spaceflightnews.features.news
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.paging.PagingData
+import com.mauromarod.spaceflightnews.core.data.paging.ArticlePagingProvider
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
-import com.mauromarod.spaceflightnews.core.domain.usecase.GetArticlesUseCase
-import com.mauromarod.spaceflightnews.core.domain.usecase.SearchArticlesUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -29,22 +28,21 @@ import java.time.Instant
 class NewsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val fakeArticles = flowOf(PagingData.from(listOf(fakeArticle(1), fakeArticle(2))))
 
     private lateinit var repository: ArticleRepository
-    private lateinit var getArticlesUseCase: GetArticlesUseCase
-    private lateinit var searchArticlesUseCase: SearchArticlesUseCase
+    private lateinit var pagingProvider: ArticlePagingProvider
     private val analyticsRepository: AnalyticsRepository = mockk(relaxed = true)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         repository = mockk(relaxed = true)
-        every { repository.getArticles() } returns fakeArticles
-        every { repository.searchArticles(any()) } returns fakeArticles
+        every { repository.observeArticles() } returns emptyFlow()
+        every { repository.observeSearchedArticles(any()) } returns emptyFlow()
         coEvery { repository.getLastSyncedAt() } returns null
-        getArticlesUseCase = GetArticlesUseCase(repository)
-        searchArticlesUseCase = SearchArticlesUseCase(repository)
+        pagingProvider = mockk(relaxed = true)
+        every { pagingProvider.observeArticleFeed() } returns emptyFlow()
+        every { pagingProvider.observeArticleSearch(any()) } returns emptyFlow()
     }
 
     @After
@@ -121,8 +119,7 @@ class NewsViewModelTest {
         )
     ) = NewsViewModel(
         savedStateHandle = savedStateHandle,
-        getArticlesUseCase = getArticlesUseCase,
-        searchArticlesUseCase = searchArticlesUseCase,
+        pagingProvider = pagingProvider,
         repository = repository,
         analyticsRepository = analyticsRepository,
     )

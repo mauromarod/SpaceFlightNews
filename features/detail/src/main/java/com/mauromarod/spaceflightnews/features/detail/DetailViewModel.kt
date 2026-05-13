@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mauromarod.spaceflightnews.core.domain.model.ArticleNotFoundException
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.CrashReporter
+import com.mauromarod.spaceflightnews.core.domain.repository.RemoteConfigRepository
 import com.mauromarod.spaceflightnews.core.domain.usecase.GetArticleDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

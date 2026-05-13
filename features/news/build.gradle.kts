@@ -60,6 +60,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 
 dependencies {
     implementation(project(":core:domain"))
+    implementation(project(":core:data"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:ui-components"))
     implementation(project(":core:common"))

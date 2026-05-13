@@ -5,11 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.mauromarod.spaceflightnews.core.data.paging.ArticlePagingProvider
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
-import com.mauromarod.spaceflightnews.core.domain.usecase.GetArticlesUseCase
-import com.mauromarod.spaceflightnews.core.domain.usecase.SearchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val getArticlesUseCase: GetArticlesUseCase,
-    private val searchArticlesUseCase: SearchArticlesUseCase,
+    private val pagingProvider: ArticlePagingProvider,
     private val repository: ArticleRepository,
     private val analyticsRepository: AnalyticsRepository,
 ) : ViewModel() {
@@ -43,7 +41,8 @@ class NewsViewModel @Inject constructor(
     val articles: Flow<PagingData<Article>> = _searchQuery
         .debounce(500L)
         .flatMapLatest { query ->
-            if (query.isBlank()) getArticlesUseCase() else searchArticlesUseCase(query)
+            if (query.isBlank()) pagingProvider.observeArticleFeed()
+            else pagingProvider.observeArticleSearch(query)
         }
         .cachedIn(viewModelScope)
 
