@@ -3,7 +3,11 @@ package com.mauromarod.spaceflightnews.features.detail
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +26,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,17 +35,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.testTag
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.compose.foundation.layout.aspectRatio
-import com.mauromarod.spaceflightnews.core.domain.model.Article
+import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
+import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
+import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
+import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
+import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.uicomponents.ErrorState
-import com.mauromarod.spaceflightnews.core.uicomponents.LoadingState
+import com.mauromarod.spaceflightnews.core.uicomponents.ShimmerBox
 import com.mauromarod.spaceflightnews.core.uicomponents.LocalAnimatedVisibilityScope
 import com.mauromarod.spaceflightnews.core.uicomponents.LocalSharedTransitionScope
 import com.mauromarod.spaceflightnews.core.uicomponents.NetworkImage
@@ -52,8 +61,8 @@ import java.util.Locale
 @Composable
 fun DetailScreen(
     onBack: () -> Unit,
+    viewModel: DetailViewModel,
     modifier: Modifier = Modifier,
-    viewModel: DetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -72,7 +81,6 @@ fun DetailScreen(
                             snackbarHostState.showSnackbar(noBrowserMsg)
                         }
                     }
-                    is DetailUiEffect.NavigateBack -> onBack()
                     is DetailUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
                 }
             }
@@ -80,38 +88,90 @@ fun DetailScreen(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.background(VergeCanvas),
+        containerColor = VergeCanvas,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.topbar_title)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.topbar_title).uppercase(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = VergeHazardWhite,
+                    )
+                },
                 navigationIcon = {
                     IconButton(
-                        onClick = { viewModel.onEvent(DetailUiEvent.BackClicked) },
+                        onClick = onBack,
                         modifier = Modifier.testTag(DetailTags.BACK_BUTTON),
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_back)
+                            contentDescription = stringResource(R.string.cd_back),
+                            tint = VergeHazardWhite,
                         )
                     }
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = VergeCanvas),
             )
-        }
+        },
     ) { innerPadding ->
         when (val state = uiState) {
-            is DetailUiState.Loading -> LoadingState(modifier = Modifier.padding(innerPadding))
+            is DetailUiState.Loading -> DetailLoadingState(modifier = Modifier.padding(innerPadding))
             is DetailUiState.Error -> ErrorState(
                 message = if (state.isNotFound) stringResource(R.string.error_article_not_found)
                           else state.message,
                 onRetry = { viewModel.onEvent(DetailUiEvent.RetryClicked) },
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
             )
             is DetailUiState.Content -> ArticleDetail(
                 article = state.article,
                 onOpenUrl = { viewModel.onEvent(DetailUiEvent.OpenUrlClicked) },
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
             )
+        }
+    }
+}
+
+@Composable
+private fun DetailLoadingState(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(VergeCanvas)
+            .padding(bottom = MaterialTheme.spacing.large),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
+    ) {
+        ShimmerBox(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(16f / 9f)
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(horizontal = MaterialTheme.spacing.medium)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
+        ) {
+            ShimmerBox(
+                modifier = Modifier
+                    .fillMaxWidth(0.35f)
+                    .height(12.dp)
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.xSmall))
+
+            ShimmerBox(modifier = Modifier.fillMaxWidth().height(28.dp))
+            ShimmerBox(modifier = Modifier.fillMaxWidth().height(28.dp))
+            ShimmerBox(modifier = Modifier.fillMaxWidth(0.6f).height(28.dp))
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
+
+            repeat(5) {
+                ShimmerBox(modifier = Modifier.fillMaxWidth().height(16.dp))
+            }
+            ShimmerBox(modifier = Modifier.fillMaxWidth(0.75f).height(16.dp))
         }
     }
 }
@@ -120,7 +180,7 @@ fun DetailScreen(
 private fun ArticleDetail(
     article: Article,
     onOpenUrl: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val formatter = remember {
         DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.getDefault())
@@ -132,9 +192,12 @@ private fun ArticleDetail(
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
 
-    LazyColumn(modifier = modifier
-        .fillMaxSize()
-        .testTag(DetailTags.CONTENT)) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .background(VergeCanvas)
+            .testTag(DetailTags.CONTENT),
+    ) {
         item {
             NetworkImage(
                 url = article.imageUrl,
@@ -148,7 +211,7 @@ private fun ArticleDetail(
                             with(sharedTransitionScope) {
                                 Modifier.sharedElement(
                                     rememberSharedContentState(key = "image-${article.id}"),
-                                    animatedVisibilityScope = animatedVisibilityScope
+                                    animatedVisibilityScope = animatedVisibilityScope,
                                 )
                             }
                         } else Modifier
@@ -157,20 +220,21 @@ private fun ArticleDetail(
         }
         item {
             Text(
-                text = article.title,
-                style = MaterialTheme.typography.headlineMedium,
+                text = "${article.newsSite.uppercase()} · ${formattedDate.uppercase()}",
+                style = MaterialTheme.typography.labelMedium,
+                color = VergeSecondaryText,
                 modifier = Modifier.padding(
                     horizontal = MaterialTheme.spacing.medium,
-                    vertical = MaterialTheme.spacing.medium
-                )
+                    vertical = MaterialTheme.spacing.medium,
+                ),
             )
         }
         item {
             Text(
-                text = "${article.newsSite} · $formattedDate",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium)
+                text = article.title,
+                style = MaterialTheme.typography.headlineLarge,
+                color = VergeHazardWhite,
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
         }
@@ -178,7 +242,8 @@ private fun ArticleDetail(
             Text(
                 text = article.summary,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium)
+                color = VergeHazardWhite.copy(alpha = 0.87f),
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
         }
@@ -189,8 +254,17 @@ private fun ArticleDetail(
                     .fillMaxWidth()
                     .padding(horizontal = MaterialTheme.spacing.medium)
                     .testTag(DetailTags.READ_BUTTON),
+                shape = MaterialTheme.shapes.large,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = VergeJellyMint,
+                    contentColor = VergeCanvas,
+                ),
             ) {
-                Text(stringResource(R.string.action_read_full))
+                Text(
+                    text = stringResource(R.string.action_read_full).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = VergeCanvas,
+                )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
         }

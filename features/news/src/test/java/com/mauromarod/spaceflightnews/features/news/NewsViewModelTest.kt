@@ -2,7 +2,6 @@ package com.mauromarod.spaceflightnews.features.news
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
-import app.cash.turbine.test
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
@@ -75,17 +74,6 @@ class NewsViewModelTest {
     }
 
     @Test
-    fun `ArticleTapped emits NavigateToDetail effect`() = runTest {
-        val viewModel = buildViewModel()
-        viewModel.uiEffect.test {
-            viewModel.onEvent(NewsUiEvent.ArticleTapped(42))
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertEquals(NewsUiEffect.NavigateToDetail(42), awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `lastSyncedAt is null when repository returns null`() = runTest {
         coEvery { repository.getLastSyncedAt() } returns null
         val viewModel = buildViewModel()
@@ -103,27 +91,12 @@ class NewsViewModelTest {
     }
 
     @Test
-    fun `ArticleTapped with active search emits NavigateToDetail and tracks search converted`() = runTest {
+    fun `ArticleTapped with active search tracks search converted`() = runTest {
         val viewModel = buildViewModel()
         viewModel.onEvent(NewsUiEvent.SearchQueryChanged("Mars"))
-        viewModel.uiEffect.test {
-            viewModel.onEvent(NewsUiEvent.ArticleTapped(7))
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertEquals(NewsUiEffect.NavigateToDetail(7), awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
+        viewModel.onEvent(NewsUiEvent.ArticleTapped(7))
+        testDispatcher.scheduler.advanceUntilIdle()
         verify { analyticsRepository.trackSearchConverted(7) }
-    }
-
-    @Test
-    fun `ArticleTapped with no search uses feed source`() = runTest {
-        val viewModel = buildViewModel()
-        viewModel.uiEffect.test {
-            viewModel.onEvent(NewsUiEvent.ArticleTapped(3))
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertEquals(NewsUiEffect.NavigateToDetail(3), awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
     }
 
     @Test
@@ -139,17 +112,6 @@ class NewsViewModelTest {
         viewModel.onEvent(NewsUiEvent.SearchQueryChanged("Apollo"))
         viewModel.onArticleImpression(2, "Apollo 11", "Space.com")
         verify { analyticsRepository.trackArticleOpened(2, "Apollo 11", "Space.com", "search") }
-    }
-
-    @Test
-    fun `RetryClicked does not emit any effect`() = runTest {
-        val viewModel = buildViewModel()
-        viewModel.uiEffect.test {
-            viewModel.onEvent(NewsUiEvent.RetryClicked)
-            testDispatcher.scheduler.advanceUntilIdle()
-            expectNoEvents()
-            cancelAndIgnoreRemainingEvents()
-        }
     }
 
     private fun buildViewModel(

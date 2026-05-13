@@ -14,6 +14,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -70,5 +71,22 @@ class DetailScreenTest {
         }
 
         ArticleDetailRobot(composeTestRule).check { assertErrorStateVisible() }
+    }
+
+    @Test
+    fun backButton_callsOnBack() {
+        var backCalled = false
+        composeTestRule.setContent {
+            SpaceFlightNewsTheme {
+                DetailScreen(
+                    viewModel = buildViewModel(DetailUiState.Content(fakeArticle)),
+                    onBack = { backCalled = true }
+                )
+            }
+        }
+
+        ArticleDetailRobot(composeTestRule).perform { tapBack() }
+
+        assertTrue(backCalled)
     }
 }

@@ -31,11 +31,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import androidx.activity.compose.BackHandler
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.mauromarod.spaceflightnews.features.detail.DetailViewModel
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.repository.AuthRepository
 import com.mauromarod.spaceflightnews.core.uicomponents.R as UiR
@@ -43,6 +46,7 @@ import com.mauromarod.spaceflightnews.core.uicomponents.LocalAnimatedVisibilityS
 import com.mauromarod.spaceflightnews.core.uicomponents.LocalSharedTransitionScope
 import com.mauromarod.spaceflightnews.features.detail.DetailScreen
 import com.mauromarod.spaceflightnews.features.news.NewsScreen
+import com.mauromarod.spaceflightnews.features.news.NewsViewModel
 import com.mauromarod.spaceflightnews.login.LoginScreen
 import com.mauromarod.spaceflightnews.profile.ProfileScreen
 
@@ -57,7 +61,6 @@ fun AppNavHost(
 
     val startDestination = if (authRepository.isLoggedIn()) Screen.NewsList.route else Screen.Login.route
 
-    // Survives rotation and layout-mode switches (portrait ↔ landscape tablet).
     var selectedArticleId by rememberSaveable { mutableStateOf<Int?>(null) }
 
     if (isLandscapeTablet) {
@@ -71,7 +74,7 @@ fun AppNavHost(
     } else {
         SinglePaneLayout(
             startDestination = startDestination,
-            initialArticleId = selectedArticleId,
+            selectedArticleId = selectedArticleId,
             onArticleOpened = { selectedArticleId = it },
             onArticleClosed = { selectedArticleId = null },
             modifier = modifier,
@@ -82,7 +85,7 @@ fun AppNavHost(
 @Composable
 private fun SinglePaneLayout(
     startDestination: String,
-    initialArticleId: Int?,
+    selectedArticleId: Int?,
     onArticleOpened: (Int) -> Unit,
     onArticleClosed: () -> Unit,
     modifier: Modifier = Modifier,
@@ -90,9 +93,14 @@ private fun SinglePaneLayout(
     val navController = rememberNavController()
 
     // Restore article when switching from landscape two-pane to portrait single-pane.
-    LaunchedEffect(Unit) {
-        if (initialArticleId != null) {
-            navController.navigate(Screen.ArticleDetail.createRoute(initialArticleId))
+    LaunchedEffect(selectedArticleId) {
+        val id = selectedArticleId
+        if (id != null) {
+            val currentRoute = navController.currentDestination?.route
+            val detailRoute = Screen.ArticleDetail.createRoute(id)
+            if (currentRoute != detailRoute) {
+                navController.navigate(detailRoute)
+            }
         }
     }
 
@@ -114,6 +122,7 @@ private fun SinglePaneLayout(
                 }
 
                 composable(Screen.NewsList.route) {
+                    val newsViewModel: NewsViewModel = hiltViewModel()
                     CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                         NewsScreen(
                             onNavigateToDetail = { articleId ->
@@ -123,6 +132,7 @@ private fun SinglePaneLayout(
                             onNavigateToProfile = {
                                 navController.navigate(Screen.Profile.route)
                             },
+                            viewModel = newsViewModel,
                         )
                     }
                 }
@@ -145,12 +155,18 @@ private fun SinglePaneLayout(
                         navArgument(Screen.ArticleDetail.ARG_ARTICLE_ID) { type = NavType.IntType }
                     )
                 ) {
+                    val detailViewModel: DetailViewModel = hiltViewModel()
+                    BackHandler {
+                        onArticleClosed()
+                        navController.popBackStack()
+                    }
                     CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
                         DetailScreen(
                             onBack = {
                                 onArticleClosed()
                                 navController.popBackStack()
-                            }
+                            },
+                            viewModel = detailViewModel,
                         )
                     }
                 }
@@ -185,7 +201,7 @@ private fun TwoPaneLayout(
         }
 
         composable(Screen.NewsList.route) {
-            TwoPaneNewsDetail(
+            TwoPaneContent(
                 selectedArticleId = selectedArticleId,
                 onArticleSelected = onArticleSelected,
                 onArticleDeselected = onArticleDeselected,
@@ -210,25 +226,22 @@ private fun TwoPaneLayout(
 }
 
 @Composable
-private fun TwoPaneNewsDetail(
+internal fun TwoPaneContent(
     selectedArticleId: Int?,
     onArticleSelected: (Int) -> Unit,
     onArticleDeselected: () -> Unit,
     onNavigateToProfile: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val detailNavController = rememberNavController()
+    val detailViewModel: DetailViewModel = hiltViewModel()
 
-    // Navigate detail pane whenever selectedArticleId changes (including after rotation).
+    BackHandler(enabled = selectedArticleId != null) {
+        onArticleDeselected()
+    }
+
     LaunchedEffect(selectedArticleId) {
-        if (selectedArticleId != null) {
-            detailNavController.navigate(Screen.ArticleDetail.createRoute(selectedArticleId)) {
-                popUpTo(DETAIL_PLACEHOLDER_ROUTE) { inclusive = true }
-            }
-        } else {
-            detailNavController.navigate(DETAIL_PLACEHOLDER_ROUTE) {
-                popUpTo(DETAIL_PLACEHOLDER_ROUTE) { inclusive = true }
-            }
+        selectedArticleId?.let { id ->
+            detailViewModel.setArticleId(id)
         }
     }
 
@@ -237,40 +250,32 @@ private fun TwoPaneNewsDetail(
             .fillMaxSize()
             .semantics { testTagsAsResourceId = true }
     ) {
+        val newsViewModel: NewsViewModel = hiltViewModel()
         NewsScreen(
             onNavigateToDetail = { articleId -> onArticleSelected(articleId) },
             onNavigateToProfile = onNavigateToProfile,
+            viewModel = newsViewModel,
             modifier = Modifier.weight(1f)
         )
 
         VerticalDivider()
 
-        NavHost(
-            navController = detailNavController,
-            startDestination = DETAIL_PLACEHOLDER_ROUTE,
-            modifier = Modifier.weight(1f)
-        ) {
-            composable(DETAIL_PLACEHOLDER_ROUTE) {
-                EmptyDetailPane()
-            }
-            composable(
-                route = Screen.ArticleDetail.route,
-                arguments = listOf(
-                    navArgument(Screen.ArticleDetail.ARG_ARTICLE_ID) { type = NavType.IntType }
-                )
-            ) {
-                DetailScreen(
-                    onBack = { onArticleDeselected() }
-                )
-            }
+        if (selectedArticleId != null) {
+            DetailScreen(
+                onBack = { onArticleDeselected() },
+                viewModel = detailViewModel,
+                modifier = Modifier.weight(1f)
+            )
+        } else {
+            EmptyDetailPane(modifier = Modifier.weight(1f))
         }
     }
 }
 
 @Composable
-private fun EmptyDetailPane() {
+private fun EmptyDetailPane(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .testTag(DETAIL_EMPTY_PANE_TAG),
@@ -293,5 +298,4 @@ private fun EmptyDetailPane() {
     }
 }
 
-private const val DETAIL_PLACEHOLDER_ROUTE = "detail_placeholder"
 private const val DETAIL_EMPTY_PANE_TAG = "detail_empty_pane"

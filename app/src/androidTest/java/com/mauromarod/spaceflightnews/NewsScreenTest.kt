@@ -2,13 +2,14 @@ package com.mauromarod.spaceflightnews
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mauromarod.spaceflightnews.core.designsystem.SpaceFlightNewsTheme
 import com.mauromarod.spaceflightnews.core.domain.model.Article
-import com.mauromarod.spaceflightnews.features.news.NewsUiEffect
 import com.mauromarod.spaceflightnews.features.news.NewsUiEvent
 import com.mauromarod.spaceflightnews.features.news.NewsScreen
 import com.mauromarod.spaceflightnews.features.news.NewsViewModel
@@ -16,8 +17,9 @@ import com.mauromarod.spaceflightnews.robot.ArticleListRobot
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,7 +46,6 @@ class NewsScreenTest {
     ): NewsViewModel = mockk(relaxed = true) {
         every { searchQuery } returns MutableStateFlow("")
         every { this@mockk.articles } returns flowOf(PagingData.from(articles, loadStates))
-        every { uiEffect } returns emptyFlow<NewsUiEffect>()
         every { onEvent(any<NewsUiEvent>()) } returns Unit
     }
 
@@ -87,7 +88,6 @@ class NewsScreenTest {
                     )
                 )
             )
-            every { uiEffect } returns emptyFlow<NewsUiEffect>()
         }
 
         composeTestRule.setContent {
@@ -112,7 +112,6 @@ class NewsScreenTest {
                     )
                 )
             )
-            every { uiEffect } returns emptyFlow<NewsUiEffect>()
         }
 
         composeTestRule.setContent {
@@ -122,5 +121,41 @@ class NewsScreenTest {
         }
 
         ArticleListRobot(composeTestRule).check { assertRetryButtonVisible() }
+    }
+
+    @Test
+    fun tappingArticleCard_callsOnNavigateToDetail() {
+        var tappedId: Int? = null
+        composeTestRule.setContent {
+            SpaceFlightNewsTheme {
+                NewsScreen(
+                    viewModel = buildViewModel(),
+                    onNavigateToDetail = { tappedId = it },
+                    onNavigateToProfile = {}
+                )
+            }
+        }
+
+        ArticleListRobot(composeTestRule).perform { tapFirstArticle() }
+
+        assertEquals(1, tappedId)
+    }
+
+    @Test
+    fun tappingProfileButton_callsOnNavigateToProfile() {
+        var profileCalled = false
+        composeTestRule.setContent {
+            SpaceFlightNewsTheme {
+                NewsScreen(
+                    viewModel = buildViewModel(),
+                    onNavigateToDetail = {},
+                    onNavigateToProfile = { profileCalled = true }
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Open profile").performClick()
+
+        assertTrue(profileCalled)
     }
 }

@@ -127,19 +127,6 @@ class DetailViewModelTest {
     }
 
     @Test
-    fun `BackClicked emits NavigateBack effect`() = runTest {
-        coEvery { repository.getArticleDetail(1) } returns Result.success(fakeArticle)
-        val viewModel = buildViewModel(articleId = 1)
-
-        viewModel.uiEffect.test {
-            viewModel.onEvent(DetailUiEvent.BackClicked)
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertEquals(DetailUiEffect.NavigateBack, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `OpenUrlClicked when state is not Content does not emit effect`() = runTest {
         coEvery { repository.getArticleDetail(1) } returns
             Result.failure(Exception("error"))

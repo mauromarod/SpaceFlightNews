@@ -11,7 +11,6 @@ import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
 import com.mauromarod.spaceflightnews.core.domain.usecase.GetArticlesUseCase
 import com.mauromarod.spaceflightnews.core.domain.usecase.SearchArticlesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
@@ -38,9 +36,6 @@ class NewsViewModel @Inject constructor(
         savedStateHandle.get<String>(KEY_SEARCH_QUERY) ?: ""
     )
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
-    private val _uiEffect = Channel<NewsUiEffect>(Channel.BUFFERED)
-    val uiEffect: Flow<NewsUiEffect> = _uiEffect.receiveAsFlow()
 
     private val _lastSyncedAt = MutableStateFlow<Instant?>(null)
     val lastSyncedAt: StateFlow<Instant?> = _lastSyncedAt.asStateFlow()
@@ -73,12 +68,10 @@ class NewsViewModel @Inject constructor(
                 savedStateHandle[KEY_SEARCH_QUERY] = event.query
             }
             is NewsUiEvent.ArticleTapped -> {
-                viewModelScope.launch {
-                    val source = if (_searchQuery.value.isNotBlank()) "search" else "feed"
-                    if (_searchQuery.value.isNotBlank()) {
+                if (_searchQuery.value.isNotBlank()) {
+                    viewModelScope.launch {
                         analyticsRepository.trackSearchConverted(event.articleId)
                     }
-                    _uiEffect.send(NewsUiEffect.NavigateToDetail(event.articleId))
                 }
             }
             is NewsUiEvent.RetryClicked -> Unit
