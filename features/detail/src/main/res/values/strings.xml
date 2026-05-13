@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="topbar_title">Article</string>
+    <string name="cd_back">Back</string>
+    <string name="action_read_full">Read full article</string>
+    <string name="error_article_not_found">Article not found</string>
+    <string name="error_no_browser">No browser app found</string>
+</resources>
