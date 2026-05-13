@@ -1,0 +1,58 @@
+appId: com.mauromarod.spaceflightnews.debug
+---
+# Happy path: launch → login as guest → articles load → search → open article → back
+- launchApp:
+    clearState: true
+
+# clearState resets Firebase auth — login screen always appears on first launch
+- runFlow:
+    when:
+      visible:
+        id: "login_guest_button"
+    commands:
+      - tapOn:
+          id: "login_guest_button"
+      - waitForAnimationToEnd:
+          timeout: 6000
+
+# Article list must be visible after login
+- assertVisible:
+    id: "news_article_list"
+
+
+# Type in the search bar
+- tapOn:
+    id: "search_bar_field"
+- inputText: "SpaceX"
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# Open the first article card in results
+- tapOn:
+    index: 0
+    id: "article_card"
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# Detail screen content (LazyColumn) must be visible — language-independent
+- assertVisible:
+    id: "detail_content"
+
+# Scroll down to the read button and verify it is reachable
+- scrollUntilVisible:
+    element:
+      id: "detail_read_button"
+    direction: DOWN
+    timeout: 5000
+- assertVisible:
+    id: "detail_read_button"
+
+# Navigate back to the list
+- tapOn:
+    id: "detail_back_button"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# News list must be restored
+- assertVisible:
+    id: "news_article_list"

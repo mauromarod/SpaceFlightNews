@@ -1,0 +1,89 @@
+appId: com.mauromarod.spaceflightnews.debug
+# Requires: tablet with screenWidthDp >= 600 and auto-rotation enabled.
+# Two-pane layout only activates on landscape tablets.
+---
+
+- launchApp:
+    clearState: true
+
+# Start in portrait (single-pane)
+- setOrientation: PORTRAIT
+- waitForAnimationToEnd:
+    timeout: 3000
+
+# clearState resets Firebase auth — login screen always appears
+- runFlow:
+    when:
+      visible:
+        id: "login_guest_button"
+    commands:
+      - tapOn:
+          id: "login_guest_button"
+      - waitForAnimationToEnd:
+          timeout: 6000
+
+# Wait for articles to load from network
+- assertVisible:
+    id: "news_article_list"
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# ── Step 1: Portrait — open an article ───────────────────────────────────────
+- tapOn:
+    index: 0
+    id: "article_card"
+- waitForAnimationToEnd:
+    timeout: 5000
+
+# Single-pane detail content is shown (language-independent, no scroll needed)
+- assertVisible:
+    id: "detail_content"
+
+# ── Step 2: Rotate to landscape — two-pane shows list + same article ─────────
+
+- setOrientation: LANDSCAPE_RIGHT
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# Left pane: article list; right pane: article still selected
+- assertVisible:
+    id: "news_article_list"
+- assertVisible:
+    id: "detail_content"
+
+# ── Step 3: Rotate back to portrait — single-pane keeps article open ─────────
+
+- setOrientation: PORTRAIT
+- waitForAnimationToEnd:
+    timeout: 2000
+
+# Article content must still be visible — not the list
+- assertVisible:
+    id: "detail_content"
+- assertNotVisible:
+    id: "news_article_list"
+
+# ── Step 4: Press back — returns to article list ──────────────────────────────
+
+- tapOn:
+    id: "detail_back_button"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- assertVisible:
+    id: "news_article_list"
+- assertNotVisible:
+    id: "detail_content"
+
+# ── Step 5: Rotate to landscape — two-pane shows list + empty placeholder ─────
+
+- setOrientation: LANDSCAPE_RIGHT
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- assertVisible:
+    id: "news_article_list"
+- assertVisible:
+    id: "detail_empty_pane"
+- assertNotVisible:
+    id: "detail_content"
