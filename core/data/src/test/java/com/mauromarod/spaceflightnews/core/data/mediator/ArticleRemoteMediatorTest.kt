@@ -28,6 +28,7 @@ import org.junit.After
 import io.mockk.Ordering
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -189,7 +190,7 @@ class ArticleRemoteMediatorTest {
     fun `persist REFRESH clears both tables before inserting`() = runTest {
         val articles = listOf(fakeEntity(1), fakeEntity(2))
 
-        mediator.persist(LoadType.REFRESH, articles, prevKey = null, nextKey = 32, now = 1000L)
+        mediator.persist(LoadType.REFRESH, articles, prevKey = null, nextKey = 32)
 
         coVerify(ordering = Ordering.ORDERED) {
             remoteKeysDao.clearAll()
@@ -202,7 +203,7 @@ class ArticleRemoteMediatorTest {
     fun `persist APPEND does not clear tables`() = runTest {
         val articles = listOf(fakeEntity(1))
 
-        mediator.persist(LoadType.APPEND, articles, prevKey = 0, nextKey = 64, now = 1000L)
+        mediator.persist(LoadType.APPEND, articles, prevKey = 0, nextKey = 64)
 
         coVerify(exactly = 0) { remoteKeysDao.clearAll() }
         coVerify(exactly = 0) { articleDao.clearAll() }
@@ -210,15 +211,14 @@ class ArticleRemoteMediatorTest {
     }
 
     @Test
-    fun `persist REFRESH stores lastFetchedAt in remote keys`() = runTest {
+    fun `persist REFRESH stores non-null lastFetchedAt in remote keys`() = runTest {
         val articles = listOf(fakeEntity(1))
-        val now = 9_999_000L
         val slot = io.mockk.slot<List<com.mauromarod.spaceflightnews.core.database.entity.RemoteKeysEntity>>()
         coEvery { remoteKeysDao.insertAll(capture(slot)) } returns Unit
 
-        mediator.persist(LoadType.REFRESH, articles, prevKey = null, nextKey = 32, now = now)
+        mediator.persist(LoadType.REFRESH, articles, prevKey = null, nextKey = 32)
 
-        assertEquals(now, slot.captured.first().lastFetchedAt)
+        assertNotNull(slot.captured.first().lastFetchedAt)
     }
 
     @Test
@@ -227,7 +227,7 @@ class ArticleRemoteMediatorTest {
         val slot = io.mockk.slot<List<com.mauromarod.spaceflightnews.core.database.entity.RemoteKeysEntity>>()
         coEvery { remoteKeysDao.insertAll(capture(slot)) } returns Unit
 
-        mediator.persist(LoadType.APPEND, articles, prevKey = 0, nextKey = 64, now = 1000L)
+        mediator.persist(LoadType.APPEND, articles, prevKey = 0, nextKey = 64)
 
         assertNull(slot.captured.first().lastFetchedAt)
     }
@@ -238,7 +238,7 @@ class ArticleRemoteMediatorTest {
         val slot = io.mockk.slot<List<com.mauromarod.spaceflightnews.core.database.entity.RemoteKeysEntity>>()
         coEvery { remoteKeysDao.insertAll(capture(slot)) } returns Unit
 
-        mediator.persist(LoadType.REFRESH, articles, prevKey = null, nextKey = 32, now = 0L)
+        mediator.persist(LoadType.REFRESH, articles, prevKey = null, nextKey = 32)
 
         val key = slot.captured.first()
         assertNull(key.prevKey)

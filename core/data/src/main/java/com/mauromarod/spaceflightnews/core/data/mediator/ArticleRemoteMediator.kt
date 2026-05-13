@@ -61,10 +61,8 @@ internal class ArticleRemoteMediator(
                     val endOfPaginationReached = response.next == null
                     val prevKey = if (offset == 0) null else offset - pageSize
                     val nextKey = if (endOfPaginationReached) null else offset + pageSize
-                    val now = System.currentTimeMillis()
-
                     database.withTransaction {
-                        persist(loadType, response.results.map { it.toEntity() }, prevKey, nextKey, now)
+                        persist(loadType, response.results.map { it.toEntity() }, prevKey, nextKey)
                     }
 
                     trace?.putMetric("articles_count", response.results.size.toLong())
@@ -85,8 +83,8 @@ internal class ArticleRemoteMediator(
         articles: List<ArticleEntity>,
         prevKey: Int?,
         nextKey: Int?,
-        now: Long
     ) {
+        val now = System.currentTimeMillis()
         if (loadType == LoadType.REFRESH) {
             remoteKeysDao.clearAll()
             articleDao.clearAll()

@@ -1,6 +1,7 @@
 package com.mauromarod.spaceflightnews.core.data.repository
 
 import com.mauromarod.spaceflightnews.core.data.mapper.toEntity
+import com.mauromarod.spaceflightnews.core.data.util.buildFtsQuery
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
 import com.mauromarod.spaceflightnews.core.database.dao.RemoteKeysDao
 import com.mauromarod.spaceflightnews.core.database.mapper.toDomain
@@ -49,21 +50,12 @@ class ArticleRepositoryImpl(
         }
     }
 
-    override fun isDataStale(ttlMinutes: Int): Boolean {
-        val lastFetched = kotlinx.coroutines.runBlocking { remoteKeysDao.getLastFetchedAt() }
-            ?: return true
+    override suspend fun isDataStale(ttlMinutes: Int): Boolean {
+        val lastFetched = remoteKeysDao.getLastFetchedAt() ?: return true
         val ttlMillis = TimeUnit.MINUTES.toMillis(ttlMinutes.toLong())
         return System.currentTimeMillis() - lastFetched > ttlMillis
     }
 
     override suspend fun getLastSyncedAt(): Instant? =
         remoteKeysDao.getLastFetchedAt()?.let { Instant.ofEpochMilli(it) }
-
-    internal companion object {
-        fun buildFtsQuery(query: String): String =
-            query.trim().split("\\s+".toRegex())
-                .filter { it.isNotEmpty() }
-                .joinToString(" ") { "$it*" }
-                .ifEmpty { query }
-    }
 }

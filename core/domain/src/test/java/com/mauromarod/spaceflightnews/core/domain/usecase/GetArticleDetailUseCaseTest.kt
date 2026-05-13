@@ -43,7 +43,7 @@ class GetArticleDetailUseCaseTest {
     @Before fun setUp() {
         Dispatchers.setMain(testDispatcher)
         every { remoteConfig.getCacheTtlMinutes() } returns 5
-        every { repository.isDataStale(any()) } returns false
+        coEvery { repository.isDataStale(any()) } returns false
     }
 
     @After fun tearDown() {

@@ -9,6 +9,7 @@ import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator
 import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator.Companion.PAGE_SIZE
 import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator.Companion.PREFETCH_DISTANCE
 import com.mauromarod.spaceflightnews.core.data.mediator.SearchRemoteMediator
+import com.mauromarod.spaceflightnews.core.data.util.buildFtsQuery
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
 import com.mauromarod.spaceflightnews.core.database.dao.RemoteKeysDao
 import com.mauromarod.spaceflightnews.core.database.mapper.toDomain
@@ -58,11 +59,4 @@ class ArticlePagingProviderImpl(
         ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
 
-    internal companion object {
-        fun buildFtsQuery(query: String): String =
-            query.trim().split("\\s+".toRegex())
-                .filter { it.isNotEmpty() }
-                .joinToString(" ") { "$it*" }
-                .ifEmpty { query }
-    }
 }

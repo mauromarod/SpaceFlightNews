@@ -11,7 +11,7 @@ interface ArticleRepository {
 
     suspend fun getArticleDetail(id: Int): Result<Article>
 
-    fun isDataStale(ttlMinutes: Int): Boolean
+    suspend fun isDataStale(ttlMinutes: Int): Boolean
 
     suspend fun getLastSyncedAt(): Instant?
 }

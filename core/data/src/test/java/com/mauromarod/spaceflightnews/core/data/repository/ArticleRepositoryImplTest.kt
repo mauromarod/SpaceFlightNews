@@ -1,5 +1,6 @@
 package com.mauromarod.spaceflightnews.core.data.repository
 
+import com.mauromarod.spaceflightnews.core.data.util.buildFtsQuery
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
 import com.mauromarod.spaceflightnews.core.database.dao.RemoteKeysDao
 import com.mauromarod.spaceflightnews.core.database.entity.ArticleEntity
@@ -125,14 +126,14 @@ class ArticleRepositoryImplTest {
     // --- isDataStale ---
 
     @Test
-    fun `isDataStale returns true when no lastFetchedAt exists`() {
+    fun `isDataStale returns true when no lastFetchedAt exists`() = runTest {
         coEvery { remoteKeysDao.getLastFetchedAt() } returns null
 
         assertTrue(repository.isDataStale(ttlMinutes = 5))
     }
 
     @Test
-    fun `isDataStale returns false when within TTL`() {
+    fun `isDataStale returns false when within TTL`() = runTest {
         val recentFetch = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(2)
         coEvery { remoteKeysDao.getLastFetchedAt() } returns recentFetch
 
@@ -140,7 +141,7 @@ class ArticleRepositoryImplTest {
     }
 
     @Test
-    fun `isDataStale returns true when TTL has elapsed`() {
+    fun `isDataStale returns true when TTL has elapsed`() = runTest {
         val oldFetch = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(10)
         coEvery { remoteKeysDao.getLastFetchedAt() } returns oldFetch
 
@@ -170,27 +171,27 @@ class ArticleRepositoryImplTest {
 
     @Test
     fun `buildFtsQuery appends wildcard to single word`() {
-        assertEquals("spacex*", ArticleRepositoryImpl.buildFtsQuery("spacex"))
+        assertEquals("spacex*", buildFtsQuery("spacex"))
     }
 
     @Test
     fun `buildFtsQuery appends wildcard to each word in multi-word query`() {
-        assertEquals("space* x*", ArticleRepositoryImpl.buildFtsQuery("space x"))
+        assertEquals("space* x*", buildFtsQuery("space x"))
     }
 
     @Test
     fun `buildFtsQuery trims leading and trailing whitespace before processing`() {
-        assertEquals("spacex*", ArticleRepositoryImpl.buildFtsQuery("  spacex  "))
+        assertEquals("spacex*", buildFtsQuery("  spacex  "))
     }
 
     @Test
     fun `buildFtsQuery returns original empty string when query is blank`() {
-        assertEquals("", ArticleRepositoryImpl.buildFtsQuery(""))
+        assertEquals("", buildFtsQuery(""))
     }
 
     @Test
     fun `buildFtsQuery returns original whitespace-only string when all tokens empty`() {
-        assertEquals("  ", ArticleRepositoryImpl.buildFtsQuery("  "))
+        assertEquals("  ", buildFtsQuery("  "))
     }
 
     // --- Helpers ---
