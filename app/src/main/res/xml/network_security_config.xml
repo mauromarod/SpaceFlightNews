@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        The Spaceflight News API is always HTTPS. However, some news publishers
+        referenced in the API (e.g., spaceflightnow.com) serve article images over
+        plain HTTP. Since this app aggregates content from arbitrary third-party
+        sources, cleartext is permitted for image URLs we do not control.
+        API traffic to api.spaceflightnewsapi.net is never cleartext.
+    -->
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

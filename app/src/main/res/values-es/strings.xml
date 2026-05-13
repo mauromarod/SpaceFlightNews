@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Space Flight News</string>
+
+    <!-- Login screen -->
+    <string name="login_app_subtitle">by mauromarod</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Contraseña</string>
+    <string name="login_password_show">Mostrar contraseña</string>
+    <string name="login_password_hide">Ocultar contraseña</string>
+    <string name="login_sign_in">Iniciar sesión</string>
+    <string name="login_create_account">Crear cuenta</string>
+    <string name="login_switch_to_signup">¿No tenés cuenta? Creá una</string>
+    <string name="login_switch_to_signin">¿Ya tenés cuenta? Iniciá sesión</string>
+    <string name="login_continue_as_guest">Continuar como invitado</string>
+
+    <!-- Login errors -->
+    <string name="login_error_fields_required">El email y la contraseña son obligatorios</string>
+    <string name="login_error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="login_error_invalid_credentials">Email o contraseña incorrectos</string>
+    <string name="login_error_no_internet">Sin conexión a internet</string>
+    <string name="login_error_signin_failed">Error al iniciar sesión. Intentá de nuevo.</string>
+    <string name="login_error_email_in_use">Ya existe una cuenta con este email</string>
+    <string name="login_error_invalid_email">Dirección de email inválida</string>
+    <string name="login_error_signup_failed">Error al crear la cuenta. Intentá de nuevo.</string>
+
+    <!-- Profile screen -->
+    <string name="profile_title">Perfil</string>
+    <string name="profile_guest_name">Invitado</string>
+    <string name="profile_section_theme">Tema</string>
+    <string name="profile_theme_system">Sistema</string>
+    <string name="profile_theme_light">Claro</string>
+    <string name="profile_theme_dark">Oscuro</string>
+    <string name="profile_section_language">Idioma</string>
+    <string name="profile_language_system">Sistema</string>
+    <string name="profile_language_english">English</string>
+    <string name="profile_language_spanish">Español</string>
+    <string name="profile_sign_out">Cerrar sesión</string>
+    <string name="profile_cd_back">Volver</string>
+    <string name="profile_cd_avatar">Avatar de usuario</string>
+</resources>
