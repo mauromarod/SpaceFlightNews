@@ -6,6 +6,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,10 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import com.mauromarod.spaceflightnews.core.designsystem.VergeTileElectricBlue
 
 @Composable
 fun NetworkImage(
@@ -36,18 +40,23 @@ fun NetworkImage(
             contentScale = contentScale,
             modifier = Modifier
                 .fillMaxSize()
+                .clip(MaterialTheme.shapes.small)
                 .testTag(NetworkImageTags.IMAGE),
             onState = { state = it }
         )
-        when {
-            state is AsyncImagePainter.State.Success -> Unit
-            state is AsyncImagePainter.State.Error ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                )
-            else -> ShimmerBox(modifier = Modifier.fillMaxSize())
+        when (state) {
+            is AsyncImagePainter.State.Success -> Unit
+            is AsyncImagePainter.State.Error -> Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+            )
+
+            else -> ShimmerBox(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .aspectRatio(16f / 9f)
+            )
         }
     }
 }
@@ -64,7 +73,7 @@ fun ShimmerBox(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .alpha(alpha)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
+            .background(MaterialTheme.colorScheme.primaryContainer)
     )
 }
 

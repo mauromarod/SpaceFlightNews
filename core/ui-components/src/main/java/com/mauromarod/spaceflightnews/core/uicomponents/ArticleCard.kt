@@ -1,25 +1,28 @@
 package com.mauromarod.spaceflightnews.core.uicomponents
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mauromarod.spaceflightnews.core.designsystem.SpaceFlightNewsTheme
+import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
+import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
+import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
+import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 
 @Composable
@@ -29,7 +32,7 @@ fun ArticleCard(
     image: @Composable () -> Unit,
     headline: @Composable () -> Unit,
     supporting: @Composable () -> Unit,
-    badge: (@Composable () -> Unit)? = null
+    badge: (@Composable () -> Unit)? = null,
 ) {
     Card(
         modifier = modifier
@@ -38,28 +41,25 @@ fun ArticleCard(
             .clickable(onClick = onClick)
             .testTag(ArticleCardTags.CARD),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = VergeCanvas),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        border = BorderStroke(width = 1.dp, color = VergeHazardWhite),
     ) {
-        Row(
-            modifier = Modifier.padding(MaterialTheme.spacing.small),
-            verticalAlignment = Alignment.Top
-        ) {
+        Column {
             Box(
                 modifier = Modifier
-                    .width(100.dp)
-                    .height(80.dp)
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.small)
             ) {
                 image()
             }
+
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = MaterialTheme.spacing.small)
+                modifier = Modifier.padding(MaterialTheme.spacing.medium)
             ) {
+                badge?.invoke()
                 headline()
                 supporting()
-                badge?.invoke()
             }
         }
     }
@@ -69,54 +69,35 @@ object ArticleCardTags {
     const val CARD = "article_card"
 }
 
-@Preview(name = "ArticleCard — Light", showBackground = true)
+@Preview(name = "ArticleCard — StoryStream", showBackground = true, backgroundColor = 0xFF131313)
 @Composable
-private fun ArticleCardLightPreview() {
-    SpaceFlightNewsTheme(darkTheme = false) {
+private fun ArticleCardPreview() {
+    SpaceFlightNewsTheme {
         ArticleCard(
             onClick = {},
-            image = {
-                ShimmerBox(Modifier.fillMaxWidth())
-            },
+            image = { ShimmerBox(Modifier.fillMaxWidth()) },
             headline = {
                 Text(
                     text = "NASA reveals new findings from James Webb Space Telescope",
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = VergeHazardWhite,
+                    maxLines = 3,
+                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.xSmall),
                 )
             },
             supporting = {
                 Text(
-                    text = "Space.com · 2h ago",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        )
-    }
-}
-
-@Preview(name = "ArticleCard — Dark", showBackground = true)
-@Composable
-private fun ArticleCardDarkPreview() {
-    SpaceFlightNewsTheme(darkTheme = true) {
-        ArticleCard(
-            onClick = {},
-            image = {
-                ShimmerBox(Modifier.fillMaxWidth())
-            },
-            headline = {
-                Text(
-                    text = "SpaceX Starship completes first successful orbital test",
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2
+                    text = "SPACE.COM · MAY 13",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = VergeSecondaryText,
                 )
             },
-            supporting = {
+            badge = {
                 Text(
-                    text = "SpaceNews · 5h ago",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    text = "SCIENCE",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = VergeJellyMint,
+                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.xSmall),
                 )
             }
         )

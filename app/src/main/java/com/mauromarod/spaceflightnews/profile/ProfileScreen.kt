@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.RocketLaunch
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -38,14 +39,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mauromarod.spaceflightnews.R
-import com.mauromarod.spaceflightnews.core.designsystem.SpaceBlue
-import com.mauromarod.spaceflightnews.core.designsystem.SpaceDeepNavy
+import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
+import com.mauromarod.spaceflightnews.core.designsystem.VergeConsoleMintBorder
+import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
+import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
+import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
+import com.mauromarod.spaceflightnews.core.designsystem.VergeUltraviolet
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.ThemePreference
 
@@ -69,20 +73,26 @@ fun ProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.profile_title)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.profile_title).uppercase(),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = VergeHazardWhite,
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.profile_cd_back),
+                            tint = VergeHazardWhite,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = VergeCanvas),
             )
-        }
+        },
+        containerColor = VergeCanvas,
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -101,7 +111,7 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(MaterialTheme.spacing.large))
 
-            HorizontalDivider()
+            HorizontalDivider(color = VergeHazardWhite.copy(alpha = 0.15f))
 
             if (uiState.isThemeEnabled) {
                 Spacer(Modifier.height(MaterialTheme.spacing.medium))
@@ -112,7 +122,7 @@ fun ProfileScreen(
                     )
                 }
                 Spacer(Modifier.height(MaterialTheme.spacing.medium))
-                HorizontalDivider()
+                HorizontalDivider(color = VergeHazardWhite.copy(alpha = 0.15f))
             }
 
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
@@ -122,16 +132,19 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag(ProfileTags.SIGN_OUT_BUTTON),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.error,
-                ),
+                shape = MaterialTheme.shapes.extraLarge,
+                border = BorderStroke(1.dp, VergeUltraviolet),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = VergeUltraviolet),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
                     contentDescription = null,
                     modifier = Modifier.padding(end = MaterialTheme.spacing.small),
                 )
-                Text(stringResource(R.string.profile_sign_out))
+                Text(
+                    text = stringResource(R.string.profile_sign_out).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
 
             Spacer(Modifier.height(MaterialTheme.spacing.large))
@@ -140,10 +153,7 @@ fun ProfileScreen(
 }
 
 @Composable
-private fun UserAvatar(
-    isAnonymous: Boolean,
-    email: String?,
-) {
+private fun UserAvatar(isAnonymous: Boolean, email: String?) {
     val label = if (isAnonymous) {
         stringResource(R.string.profile_guest_name)
     } else {
@@ -154,13 +164,13 @@ private fun UserAvatar(
         modifier = Modifier
             .size(96.dp)
             .clip(CircleShape)
-            .background(SpaceDeepNavy),
+            .background(VergeCanvas),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = Icons.Outlined.RocketLaunch,
             contentDescription = stringResource(R.string.profile_cd_avatar),
-            tint = SpaceBlue,
+            tint = VergeJellyMint,
             modifier = Modifier.size(48.dp),
         )
     }
@@ -169,43 +179,37 @@ private fun UserAvatar(
 
     Text(
         text = label,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.SemiBold,
+        style = MaterialTheme.typography.headlineSmall,
+        color = VergeHazardWhite,
     )
 
     if (!isAnonymous && email != null) {
         Spacer(Modifier.height(MaterialTheme.spacing.xSmall))
         Text(
             text = email,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+            color = VergeSecondaryText,
         )
     }
 }
 
 @Composable
-private fun SettingSection(
-    title: String,
-    content: @Composable () -> Unit,
-) {
+private fun SettingSection(title: String, content: @Composable () -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
     ) {
         Text(
-            text = title,
+            text = title.uppercase(),
             style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = VergeSecondaryText,
         )
         content()
     }
 }
 
 @Composable
-private fun ThemeChips(
-    selected: ThemePreference,
-    onSelect: (ThemePreference) -> Unit,
-) {
+private fun ThemeChips(selected: ThemePreference, onSelect: (ThemePreference) -> Unit) {
     val options = listOf(
         ThemePreference.SYSTEM to stringResource(R.string.profile_theme_system),
         ThemePreference.LIGHT to stringResource(R.string.profile_theme_light),
@@ -216,10 +220,22 @@ private fun ThemeChips(
             FilterChip(
                 selected = selected == pref,
                 onClick = { onSelect(pref) },
-                label = { Text(label) },
+                label = {
+                    Text(
+                        text = label.uppercase(),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = SpaceBlue,
-                    selectedLabelColor = SpaceDeepNavy,
+                    selectedContainerColor = VergeJellyMint,
+                    selectedLabelColor = VergeCanvas,
+                    labelColor = VergeSecondaryText,
+                ),
+                border = FilterChipDefaults.filterChipBorder(
+                    enabled = true,
+                    selected = selected == pref,
+                    selectedBorderColor = VergeJellyMint,
+                    borderColor = VergeConsoleMintBorder,
                 ),
                 modifier = Modifier.testTag(
                     when (pref) {

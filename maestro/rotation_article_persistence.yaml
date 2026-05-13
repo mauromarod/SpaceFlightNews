@@ -33,7 +33,7 @@ appId: com.mauromarod.spaceflightnews.debug
     index: 0
     id: "article_card"
 - waitForAnimationToEnd:
-    timeout: 5000
+    timeout: 2000
 
 # Single-pane detail content is shown (language-independent, no scroll needed)
 - assertVisible:

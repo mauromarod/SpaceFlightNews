@@ -105,6 +105,7 @@ internal class ArticleRemoteMediator(
     }
 
     companion object {
-        const val PAGE_SIZE = 32
+        const val PAGE_SIZE = 64
+        const val PREFETCH_DISTANCE = 16
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.RocketLaunch
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
@@ -49,20 +48,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mauromarod.spaceflightnews.R
-import com.mauromarod.spaceflightnews.core.designsystem.SpaceBlue
-import com.mauromarod.spaceflightnews.core.designsystem.SpaceDeepNavy
-import com.mauromarod.spaceflightnews.core.designsystem.SpaceOnSurfaceVariant
-import com.mauromarod.spaceflightnews.core.designsystem.SpaceOutline
+import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
+import com.mauromarod.spaceflightnews.core.designsystem.VergeConsoleMintBorder
+import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
+import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
+import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
+import com.mauromarod.spaceflightnews.core.designsystem.VergeSurfaceSlate
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 
 @Composable
@@ -93,7 +94,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(SpaceDeepNavy)
+            .background(VergeCanvas)
             .semantics { testTagsAsResourceId = true }
     ) {
         Column(
@@ -107,27 +108,19 @@ fun LoginScreen(
         ) {
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
 
-            Icon(
-                imageVector = Icons.Outlined.RocketLaunch,
-                contentDescription = null,
-                tint = SpaceBlue,
-                modifier = Modifier.size(72.dp)
-            )
-
-            Spacer(Modifier.height(MaterialTheme.spacing.medium))
-
             Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineLarge,
-                color = SpaceBlue,
+                text = stringResource(R.string.app_name).uppercase(),
+                style = MaterialTheme.typography.displayLarge,
+                color = VergeJellyMint,
                 textAlign = TextAlign.Center,
             )
 
             Text(
-                text = stringResource(R.string.login_app_subtitle),
-                style = MaterialTheme.typography.bodyMedium,
-                color = SpaceOnSurfaceVariant,
+                text = stringResource(R.string.login_app_subtitle).uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = VergeSecondaryText,
                 textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = MaterialTheme.spacing.xSmall),
             )
 
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
@@ -149,15 +142,15 @@ fun LoginScreen(
                 Text(
                     text = stringResource(
                         if (isSignUp) R.string.login_switch_to_signin else R.string.login_switch_to_signup
-                    ),
-                    color = SpaceBlue,
-                    style = MaterialTheme.typography.bodyMedium,
+                    ).uppercase(),
+                    color = VergeJellyMint,
+                    style = MaterialTheme.typography.labelLarge,
                 )
             }
 
             Spacer(Modifier.height(MaterialTheme.spacing.medium))
 
-            HorizontalDivider(color = SpaceOutline)
+            HorizontalDivider(color = VergeHazardWhite.copy(alpha = 0.15f))
 
             Spacer(Modifier.height(MaterialTheme.spacing.medium))
 
@@ -167,9 +160,14 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag(LoginTags.GUEST_BUTTON),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = SpaceOnSurfaceVariant),
+                shape = MaterialTheme.shapes.extraLarge,
+                border = androidx.compose.foundation.BorderStroke(1.dp, VergeConsoleMintBorder),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = VergeSecondaryText),
             ) {
-                Text(stringResource(R.string.login_continue_as_guest))
+                Text(
+                    text = stringResource(R.string.login_continue_as_guest).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                )
             }
 
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
@@ -200,20 +198,25 @@ private fun LoginForm(
     }
 
     val fieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = SpaceBlue,
-        focusedLabelColor = SpaceBlue,
-        cursorColor = SpaceBlue,
-        unfocusedBorderColor = SpaceOutline,
-        unfocusedLabelColor = SpaceOnSurfaceVariant,
-        focusedTextColor = Color.White,
-        unfocusedTextColor = Color.White,
+        focusedBorderColor = VergeJellyMint,
+        focusedLabelColor = VergeJellyMint,
+        cursorColor = VergeJellyMint,
+        unfocusedBorderColor = VergeHazardWhite.copy(alpha = 0.4f),
+        unfocusedLabelColor = VergeSecondaryText,
+        focusedTextColor = VergeHazardWhite,
+        unfocusedTextColor = VergeHazardWhite,
+        focusedContainerColor = VergeCanvas,
+        unfocusedContainerColor = VergeCanvas,
     )
+
+    val fieldShape = androidx.compose.foundation.shape.RoundedCornerShape(2.dp)
 
     OutlinedTextField(
         value = email,
         onValueChange = { email = it },
         label = { Text(stringResource(R.string.login_email_label)) },
         singleLine = true,
+        shape = fieldShape,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Next,
@@ -234,6 +237,7 @@ private fun LoginForm(
         onValueChange = { password = it },
         label = { Text(stringResource(R.string.login_password_label)) },
         singleLine = true,
+        shape = fieldShape,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -247,7 +251,7 @@ private fun LoginForm(
                     contentDescription = stringResource(
                         if (passwordVisible) R.string.login_password_hide else R.string.login_password_show
                     ),
-                    tint = SpaceOnSurfaceVariant,
+                    tint = VergeSecondaryText,
                 )
             }
         },
@@ -265,18 +269,23 @@ private fun LoginForm(
         modifier = Modifier
             .fillMaxWidth()
             .testTag(if (isSignUp) LoginTags.SIGNUP_SUBMIT_BUTTON else LoginTags.LOGIN_SUBMIT_BUTTON),
-        colors = ButtonDefaults.buttonColors(containerColor = SpaceBlue),
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = VergeJellyMint,
+            contentColor = VergeCanvas,
+        ),
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(18.dp),
                 strokeWidth = 2.dp,
-                color = SpaceDeepNavy,
+                color = VergeCanvas,
             )
         } else {
             Text(
-                text = stringResource(if (isSignUp) R.string.login_create_account else R.string.login_sign_in),
-                color = SpaceDeepNavy,
+                text = stringResource(if (isSignUp) R.string.login_create_account else R.string.login_sign_in).uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = VergeCanvas,
             )
         }
     }

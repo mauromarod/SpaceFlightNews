@@ -2,9 +2,8 @@ package com.mauromarod.spaceflightnews.core.uicomponents
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -20,6 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mauromarod.spaceflightnews.core.designsystem.SpaceFlightNewsTheme
+import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
+import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 
 @Composable
@@ -27,7 +28,7 @@ fun EmptyState(
     title: String,
     subtitle: String,
     modifier: Modifier = Modifier,
-    action: (@Composable () -> Unit)? = null
+    action: (@Composable () -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -35,32 +36,40 @@ fun EmptyState(
             .padding(MaterialTheme.spacing.xLarge)
             .testTag(EmptyStateTags.CONTAINER),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             imageVector = Icons.Outlined.Search,
             contentDescription = null,
-            modifier = Modifier.size(72.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            modifier = Modifier.size(64.dp),
+            tint = VergeJellyMint,
         )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
         Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
+            text = title.uppercase(),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
-            modifier = Modifier.testTag(EmptyStateTags.TITLE)
+            modifier = Modifier
+                .padding(top = MaterialTheme.spacing.medium)
+                .testTag(EmptyStateTags.TITLE),
         )
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
         Text(
             text = subtitle,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = VergeSecondaryText,
             textAlign = TextAlign.Center,
-            modifier = Modifier.testTag(EmptyStateTags.SUBTITLE)
+            modifier = Modifier
+                .padding(top = MaterialTheme.spacing.small)
+                .testTag(EmptyStateTags.SUBTITLE),
         )
         if (action != null) {
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-            action()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = MaterialTheme.spacing.large)
+            ) {
+                action()
+            }
         }
     }
 }
@@ -71,24 +80,10 @@ object EmptyStateTags {
     const val SUBTITLE = "empty_state_subtitle"
 }
 
-@Preview(name = "EmptyState — Light", showBackground = true)
+@Preview(name = "EmptyState", showBackground = true, backgroundColor = 0xFF131313)
 @Composable
-private fun EmptyStateLightPreview() {
-    SpaceFlightNewsTheme(darkTheme = false) {
-        EmptyState(
-            title = "No results found",
-            subtitle = "Try searching for something else"
-        )
-    }
-}
-
-@Preview(name = "EmptyState — Dark", showBackground = true)
-@Composable
-private fun EmptyStateDarkPreview() {
-    SpaceFlightNewsTheme(darkTheme = true) {
-        EmptyState(
-            title = "No results found",
-            subtitle = "Try searching for something else"
-        )
+private fun EmptyStatePreview() {
+    SpaceFlightNewsTheme {
+        EmptyState(title = "No results found", subtitle = "Try searching for something else")
     }
 }

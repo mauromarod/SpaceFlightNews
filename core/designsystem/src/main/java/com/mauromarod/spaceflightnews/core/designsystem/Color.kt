@@ -2,22 +2,41 @@ package com.mauromarod.spaceflightnews.core.designsystem
 
 import androidx.compose.ui.graphics.Color
 
-// Brand palette
-val SpaceBlue = Color(0xFF4FC3F7)
-val SpaceOrange = Color(0xFFFF8A65)
-val SpaceDeepNavy = Color(0xFF0A0E1A)
-val SpaceSurface = Color(0xFF12172A)
-val SpaceSurfaceVariant = Color(0xFF1E2640)
-val SpaceOnSurface = Color(0xFFE8EAF6)
-val SpaceOnSurfaceVariant = Color(0xFF9EA7C4)
-val SpaceError = Color(0xFFCF6679)
-val SpaceOnError = Color(0xFFFFFFFF)
-val SpaceOutline = Color(0xFF3A4263)
+// Canvas
+val VergeCanvas = Color(0xFF131313)
+val VergeSurfaceSlate = Color(0xFF2D2D2D)
+val VergeImageFrame = Color(0xFF313131)
 
-// Light palette overrides (minimal — design is primarily dark)
-val LightPrimary = Color(0xFF0277BD)
-val LightBackground = Color(0xFFF5F7FF)
-val LightSurface = Color(0xFFFFFFFF)
-val LightOnBackground = Color(0xFF0A0E1A)
-val LightOnSurface = Color(0xFF12172A)
-val LightSurfaceVariant = Color(0xFFE8EAF6)
+// Brand hazards
+val VergeJellyMint = Color(0xFF3CFFD0)
+val VergeUltraviolet = Color(0xFF5200FF)
+val VergeConsoleMintBorder = Color(0xFF309875)
+val VergePurpleRule = Color(0xFF3D00BF)
+
+// Interactive
+val VergeDeepLinkBlue = Color(0xFF3860BE)
+val VergeFocusCyan = Color(0xFF1EAEDB)
+val VergeDimGray = Color(0xFF8C8C8C)
+
+// Text
+val VergeHazardWhite = Color(0xFFFFFFFF)
+val VergeSecondaryText = Color(0xFF949494)
+val VergeMutedText = Color(0xFFE9E9E9)
+val VergeInvertedText = Color(0xFF131313)
+val VergeAbsoluteBlack = Color(0xFF000000)
+
+// Overlay
+val VergeOverlayBlack = Color(0x54000000)
+
+// Tile accent fills (for featured cards)
+val VergeTileYellow = Color(0xFFFFE030)
+val VergeTilePink = Color(0xFFFF5CA8)
+val VergeTileOrange = Color(0xFFFF6B1A)
+val VergeTileElectricBlue = Color(0xFF0066FF)
+
+// Light
+val VergeLightBackground = Color(0xFFF5F5F5)
+val VergeLightSurface = Color(0xFFFFFFFF)
+val VergeLightSecondaryText = Color(0xFF4A4A4A)
+val VergeLightSurfaceVariant = Color(0xFFEAEAEA)
+

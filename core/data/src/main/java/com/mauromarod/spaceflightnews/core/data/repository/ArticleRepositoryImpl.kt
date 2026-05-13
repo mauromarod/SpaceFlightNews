@@ -8,6 +8,7 @@ import androidx.paging.map
 import com.mauromarod.spaceflightnews.core.data.mapper.toDomain
 import com.mauromarod.spaceflightnews.core.data.mapper.toEntity
 import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator
+import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator.Companion.PREFETCH_DISTANCE
 import com.mauromarod.spaceflightnews.core.data.mediator.SearchRemoteMediator
 import com.mauromarod.spaceflightnews.core.database.AppDatabase
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
@@ -27,8 +28,7 @@ import java.util.concurrent.TimeUnit
 
 private val pagingConfig = PagingConfig(
     pageSize = ArticleRemoteMediator.PAGE_SIZE,
-    prefetchDistance = 15,
-    enablePlaceholders = false
+    prefetchDistance = PREFETCH_DISTANCE
 )
 
 @OptIn(ExperimentalPagingApi::class)
