@@ -1,6 +1,5 @@
 package com.mauromarod.spaceflightnews.core.data.repository
 
-import com.mauromarod.spaceflightnews.core.database.AppDatabase
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
 import com.mauromarod.spaceflightnews.core.database.dao.RemoteKeysDao
 import com.mauromarod.spaceflightnews.core.database.entity.ArticleEntity
@@ -27,7 +26,6 @@ import java.util.concurrent.TimeUnit
 class ArticleRepositoryImplTest {
 
     private val api: ArticleApi = mockk()
-    private val database: AppDatabase = mockk(relaxed = true)
     private val articleDao: ArticleDao = mockk(relaxed = true)
     private val remoteKeysDao: RemoteKeysDao = mockk(relaxed = true)
 
@@ -35,20 +33,20 @@ class ArticleRepositoryImplTest {
 
     @Before
     fun setUp() {
-        repository = ArticleRepositoryImpl(api, database, articleDao, remoteKeysDao)
+        repository = ArticleRepositoryImpl(api, articleDao, remoteKeysDao)
     }
 
-    // --- getArticles / searchArticles ---
+    // --- observeArticles / observeSearchedArticles ---
 
     @Test
-    fun `getArticles returns a paging flow`() {
-        val flow = repository.getArticles()
+    fun `observeArticles returns a flow`() {
+        val flow = repository.observeArticles()
         assertNotNull(flow)
     }
 
     @Test
-    fun `searchArticles returns a paging flow`() {
-        val flow = repository.searchArticles("SpaceX")
+    fun `observeSearchedArticles returns a flow`() {
+        val flow = repository.observeSearchedArticles("SpaceX")
         assertNotNull(flow)
     }
 
@@ -130,7 +128,7 @@ class ArticleRepositoryImplTest {
     fun `isDataStale returns true when no lastFetchedAt exists`() {
         coEvery { remoteKeysDao.getLastFetchedAt() } returns null
 
-        assertTrue(repository.isDataStale())
+        assertTrue(repository.isDataStale(ttlMinutes = 5))
     }
 
     @Test
