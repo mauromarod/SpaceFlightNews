@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">Search articles…</string>
+    <string name="cd_open_profile">Open profile</string>
+    <string name="empty_no_results_title">No results found</string>
+    <string name="empty_no_results_subtitle">No cached results for this search. Try again when connected.</string>
+    <string name="empty_no_articles_title">No articles found</string>
+    <string name="empty_no_articles_subtitle">Try a different search term or pull to refresh</string>
+    <string name="offline_cached">Offline · Showing cached data</string>
+    <string name="offline_just_now">Offline · Last updated just now</string>
+    <string name="offline_minutes_ago">Offline · Last updated %dm ago</string>
+    <string name="offline_hours_ago">Offline · Last updated %dh ago</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_generic">Something went wrong</string>
+</resources>

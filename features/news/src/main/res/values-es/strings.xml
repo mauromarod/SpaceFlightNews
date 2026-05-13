@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">Buscar artículos…</string>
+    <string name="cd_open_profile">Abrir perfil</string>
+    <string name="empty_no_results_title">Sin resultados</string>
+    <string name="empty_no_results_subtitle">Sin resultados en caché para esta búsqueda. Intentá de nuevo con conexión.</string>
+    <string name="empty_no_articles_title">No se encontraron artículos</string>
+    <string name="empty_no_articles_subtitle">Probá otro término o deslizá para actualizar</string>
+    <string name="offline_cached">Sin conexión · Mostrando datos en caché</string>
+    <string name="offline_just_now">Sin conexión · Actualizado hace instantes</string>
+    <string name="offline_minutes_ago">Sin conexión · Actualizado hace %d min</string>
+    <string name="offline_hours_ago">Sin conexión · Actualizado hace %d h</string>
+    <string name="error_no_internet">Sin conexión a internet</string>
+    <string name="error_generic">Algo salió mal</string>
+</resources>
