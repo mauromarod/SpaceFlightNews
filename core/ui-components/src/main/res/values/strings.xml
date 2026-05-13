@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_retry">Retry</string>
+    <string name="cd_loading">Loading articles</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="detail_placeholder">Select an article to read</string>
+</resources>
