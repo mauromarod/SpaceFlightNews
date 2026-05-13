@@ -1,0 +1,41 @@
+# Baseline Profile — Space Flight News
+#
+# Generated manually from the critical user paths:
+#   1. Cold startup (Application + MainActivity + AppNavHost + NewsScreen)
+#   2. Article list scroll (LazyColumn, ArticleCard, NetworkImage)
+#   3. Search (SearchBar, debounce flow, FTS query)
+#   4. Navigation to detail (NavController, DetailScreen)
+#
+# Format: HSP method descriptors. H = hot (JIT-compiled), S = startup,
+# P = post-startup. Prefix with L for class references.
+# The profileinstaller library installs this profile at APK install time.
+
+# ── Application & MainActivity ──────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/SpaceFlightNewsApplication;->onCreate()V
+HSPLcom/mauromarod/spaceflightnews/MainActivity;->onCreate(Landroid/os/Bundle;)V
+
+# ── Navigation ───────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/navigation/AppNavHostKt;->AppNavHost(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+
+# ── News screen ──────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->NewsScreen(Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->NewsContent(Landroidx/paging/compose/LazyPagingItems;Landroidx/compose/foundation/lazy/LazyListState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->ArticleList(Landroidx/paging/compose/LazyPagingItems;Lkotlin/jvm/functions/Function1;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsViewModel;-><init>(Lcom/mauromarod/spaceflightnews/core/domain/usecase/GetArticlesUseCase;Lcom/mauromarod/spaceflightnews/core/domain/usecase/SearchArticlesUseCase;Lcom/mauromarod/spaceflightnews/core/domain/repository/ArticleRepository;Landroidx/lifecycle/SavedStateHandle;)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsViewModel;->onEvent(Lcom/mauromarod/spaceflightnews/features/news/NewsUiEvent;)V
+
+# ── Detail screen ────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->DetailScreen(ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailViewModel;-><init>(Lcom/mauromarod/spaceflightnews/core/domain/usecase/GetArticleDetailUseCase;Landroidx/lifecycle/SavedStateHandle;)V
+
+# ── UI Components (hot during list scroll) ───────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/ArticleCardKt;->ArticleCard(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/NetworkImageKt;->NetworkImage(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/layout/ContentScale;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+
+# ── Data layer (startup critical path) ──────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/core/data/repository/ArticleRepositoryImpl;-><init>(Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;Lcom/mauromarod/spaceflightnews/core/database/AppDatabase;Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;)V
+HSPLcom/mauromarod/spaceflightnews/core/data/repository/ArticleRepositoryImpl;->getArticles()Lkotlinx/coroutines/flow/Flow;
+HSPLcom/mauromarod/spaceflightnews/core/data/mediator/ArticleRemoteMediator;->load(Landroidx/paging/LoadType;Landroidx/paging/PagingState;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+
+# ── Design system (startup — theme application) ──────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/core/designsystem/ThemeKt;->SpaceFlightNewsTheme(ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
