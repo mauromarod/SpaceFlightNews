@@ -3,8 +3,10 @@ package com.mauromarod.spaceflightnews.core.domain.usecase
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.domain.model.ArticleNotFoundException
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
+import com.mauromarod.spaceflightnews.core.domain.repository.RemoteConfigRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +25,8 @@ import java.time.Instant
 class GetArticleDetailUseCaseTest {
     private val testDispatcher = StandardTestDispatcher()
     private val repository: ArticleRepository = mockk()
-    private val useCase = GetArticleDetailUseCase(repository)
+    private val remoteConfig: RemoteConfigRepository = mockk()
+    private val useCase = GetArticleDetailUseCase(repository, remoteConfig)
 
     private val fakeArticle =
         Article(
@@ -39,6 +42,8 @@ class GetArticleDetailUseCaseTest {
 
     @Before fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        every { remoteConfig.getCacheTtlMinutes() } returns 5
+        every { repository.isDataStale(any()) } returns false
     }
 
     @After fun tearDown() {

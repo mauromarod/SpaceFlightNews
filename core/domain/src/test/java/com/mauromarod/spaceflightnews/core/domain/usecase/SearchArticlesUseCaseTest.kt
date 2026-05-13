@@ -1,6 +1,5 @@
 package com.mauromarod.spaceflightnews.core.domain.usecase
 
-import androidx.paging.PagingData
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
 import io.mockk.every
@@ -16,23 +15,23 @@ class SearchArticlesUseCaseTest {
 
     @Test
     fun `invoke passes query to repository and returns same flow`() {
-        val expected = flowOf(PagingData.empty<Article>())
-        every { repository.searchArticles("SpaceX") } returns expected
+        val expected = flowOf(listOf<Article>())
+        every { repository.observeSearchedArticles("SpaceX") } returns expected
 
         val result = useCase("SpaceX")
 
         assertSame(expected, result)
-        verify(exactly = 1) { repository.searchArticles("SpaceX") }
+        verify(exactly = 1) { repository.observeSearchedArticles("SpaceX") }
     }
 
     @Test
     fun `invoke with empty query delegates with empty string`() {
-        val expected = flowOf(PagingData.empty<Article>())
-        every { repository.searchArticles("") } returns expected
+        val expected = flowOf(listOf<Article>())
+        every { repository.observeSearchedArticles("") } returns expected
 
         val result = useCase("")
 
         assertSame(expected, result)
-        verify(exactly = 1) { repository.searchArticles("") }
+        verify(exactly = 1) { repository.observeSearchedArticles("") }
     }
 }

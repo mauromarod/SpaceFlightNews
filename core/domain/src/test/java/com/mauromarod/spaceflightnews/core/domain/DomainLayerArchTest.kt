@@ -18,6 +18,14 @@ class DomainLayerArchTest {
     }
 
     @Test
+    fun `domain layer must not import androidX classes`() {
+        noClasses()
+            .that().resideInAPackage("com.mauromarod.spaceflightnews.core.domain..")
+            .should().accessClassesThat().resideInAPackage("androidx..")
+            .check(domainClasses)
+    }
+
+    @Test
     fun `domain layer must not import data layer classes`() {
         noClasses()
             .that().resideInAPackage("com.mauromarod.spaceflightnews.core.domain..")
