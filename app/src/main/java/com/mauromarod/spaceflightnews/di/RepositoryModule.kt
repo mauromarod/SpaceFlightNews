@@ -1,5 +1,7 @@
 package com.mauromarod.spaceflightnews.di
 
+import com.mauromarod.spaceflightnews.core.data.paging.ArticlePagingProvider
+import com.mauromarod.spaceflightnews.core.data.paging.ArticlePagingProviderImpl
 import com.mauromarod.spaceflightnews.core.data.repository.ArticleRepositoryImpl
 import com.mauromarod.spaceflightnews.core.database.AppDatabase
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
@@ -21,13 +23,25 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideArticleRepository(
+        articleDao: ArticleDao,
+        remoteKeysDao: RemoteKeysDao,
+        api: ArticleApi,
+    ): ArticleRepository = ArticleRepositoryImpl(
+        articleDao = articleDao,
+        remoteKeysDao = remoteKeysDao,
+        api = api,
+    )
+
+    @Provides
+    @Singleton
+    fun provideArticlePagingProvider(
         api: ArticleApi,
         database: AppDatabase,
         articleDao: ArticleDao,
         remoteKeysDao: RemoteKeysDao,
         performanceTracer: PerformanceTracer,
         analyticsRepository: AnalyticsRepository,
-    ): ArticleRepository = ArticleRepositoryImpl(
+    ): ArticlePagingProvider = ArticlePagingProviderImpl(
         api = api,
         database = database,
         articleDao = articleDao,

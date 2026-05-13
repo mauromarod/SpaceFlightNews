@@ -1,6 +1,7 @@
 package com.mauromarod.spaceflightnews.di
 
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
+import com.mauromarod.spaceflightnews.core.domain.repository.RemoteConfigRepository
 import com.mauromarod.spaceflightnews.core.domain.usecase.GetArticleDetailUseCase
 import com.mauromarod.spaceflightnews.core.domain.usecase.GetArticlesUseCase
 import com.mauromarod.spaceflightnews.core.domain.usecase.SearchArticlesUseCase
@@ -26,6 +27,11 @@ object UseCaseModule {
 
     @Provides
     @ViewModelScoped
-    fun provideGetArticleDetailUseCase(repository: ArticleRepository): GetArticleDetailUseCase =
-        GetArticleDetailUseCase(repository)
+    fun provideGetArticleDetailUseCase(
+        repository: ArticleRepository,
+        remoteConfig: RemoteConfigRepository,
+    ): GetArticleDetailUseCase = GetArticleDetailUseCase(
+        repository = repository,
+        remoteConfig = remoteConfig,
+    )
 }
