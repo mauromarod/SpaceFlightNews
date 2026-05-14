@@ -1,9 +1,10 @@
 package com.mauromarod.spaceflightnews.core.database.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "articles")
+@Entity(tableName = "articles", indices = [Index("publishedAt")])
 data class ArticleEntity(
     @PrimaryKey val id: Int,
     val title: String,
