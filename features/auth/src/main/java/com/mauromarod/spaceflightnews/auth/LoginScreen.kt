@@ -1,5 +1,6 @@
 package com.mauromarod.spaceflightnews.auth
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,6 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun LoginScreen(
     onNavigateToNews: () -> Unit,
