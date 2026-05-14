@@ -58,12 +58,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mauromarod.spaceflightnews.R
-import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
-import com.mauromarod.spaceflightnews.core.designsystem.VergeConsoleMintBorder
-import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
-import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
-import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
-import com.mauromarod.spaceflightnews.core.designsystem.VergeSurfaceSlate
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 
 @Composable
@@ -94,7 +88,7 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(VergeCanvas)
+            .background(MaterialTheme.colorScheme.background)
             .semantics { testTagsAsResourceId = true }
     ) {
         Column(
@@ -111,14 +105,14 @@ fun LoginScreen(
             Text(
                 text = stringResource(R.string.app_name).uppercase(),
                 style = MaterialTheme.typography.displayLarge,
-                color = VergeJellyMint,
+                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
             )
 
             Text(
                 text = stringResource(R.string.login_app_subtitle).uppercase(),
                 style = MaterialTheme.typography.labelLarge,
-                color = VergeSecondaryText,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = MaterialTheme.spacing.xSmall),
             )
@@ -143,14 +137,14 @@ fun LoginScreen(
                     text = stringResource(
                         if (isSignUp) R.string.login_switch_to_signin else R.string.login_switch_to_signup
                     ).uppercase(),
-                    color = VergeJellyMint,
+                    color = MaterialTheme.colorScheme.primary,
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
 
             Spacer(Modifier.height(MaterialTheme.spacing.medium))
 
-            HorizontalDivider(color = VergeHazardWhite.copy(alpha = 0.15f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             Spacer(Modifier.height(MaterialTheme.spacing.medium))
 
@@ -161,8 +155,8 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .testTag(LoginTags.GUEST_BUTTON),
                 shape = MaterialTheme.shapes.extraLarge,
-                border = androidx.compose.foundation.BorderStroke(1.dp, VergeConsoleMintBorder),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = VergeSecondaryText),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
             ) {
                 Text(
                     text = stringResource(R.string.login_continue_as_guest).uppercase(),
@@ -198,15 +192,15 @@ private fun LoginForm(
     }
 
     val fieldColors = OutlinedTextFieldDefaults.colors(
-        focusedBorderColor = VergeJellyMint,
-        focusedLabelColor = VergeJellyMint,
-        cursorColor = VergeJellyMint,
-        unfocusedBorderColor = VergeHazardWhite.copy(alpha = 0.4f),
-        unfocusedLabelColor = VergeSecondaryText,
-        focusedTextColor = VergeHazardWhite,
-        unfocusedTextColor = VergeHazardWhite,
-        focusedContainerColor = VergeCanvas,
-        unfocusedContainerColor = VergeCanvas,
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        cursorColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        focusedTextColor = MaterialTheme.colorScheme.onBackground,
+        unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+        focusedContainerColor = MaterialTheme.colorScheme.surface,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surface,
     )
 
     val fieldShape = androidx.compose.foundation.shape.RoundedCornerShape(2.dp)
@@ -251,7 +245,7 @@ private fun LoginForm(
                     contentDescription = stringResource(
                         if (passwordVisible) R.string.login_password_hide else R.string.login_password_show
                     ),
-                    tint = VergeSecondaryText,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
@@ -271,21 +265,21 @@ private fun LoginForm(
             .testTag(if (isSignUp) LoginTags.SIGNUP_SUBMIT_BUTTON else LoginTags.LOGIN_SUBMIT_BUTTON),
         shape = MaterialTheme.shapes.large,
         colors = ButtonDefaults.buttonColors(
-            containerColor = VergeJellyMint,
-            contentColor = VergeCanvas,
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
         ),
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(18.dp),
                 strokeWidth = 2.dp,
-                color = VergeCanvas,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
         } else {
             Text(
                 text = stringResource(if (isSignUp) R.string.login_create_account else R.string.login_sign_in).uppercase(),
                 style = MaterialTheme.typography.labelLarge,
-                color = VergeCanvas,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
         }
     }

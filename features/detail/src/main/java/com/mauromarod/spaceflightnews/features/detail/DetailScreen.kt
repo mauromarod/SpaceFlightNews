@@ -41,10 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
-import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
-import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
 import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
-import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.uicomponents.ErrorState
@@ -88,8 +85,8 @@ fun DetailScreen(
     }
 
     Scaffold(
-        modifier = modifier.background(VergeCanvas),
-        containerColor = VergeCanvas,
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
@@ -97,7 +94,7 @@ fun DetailScreen(
                     Text(
                         text = stringResource(R.string.topbar_title).uppercase(),
                         style = MaterialTheme.typography.labelLarge,
-                        color = VergeHazardWhite,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 },
                 navigationIcon = {
@@ -108,11 +105,11 @@ fun DetailScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.cd_back),
-                            tint = VergeHazardWhite,
+                            tint = MaterialTheme.colorScheme.onBackground,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = VergeCanvas),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
             )
         },
     ) { innerPadding ->
@@ -138,7 +135,7 @@ private fun DetailLoadingState(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(VergeCanvas)
+            .background(MaterialTheme.colorScheme.background)
             .padding(bottom = MaterialTheme.spacing.large),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.medium),
     ) {
@@ -195,7 +192,7 @@ private fun ArticleDetail(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(VergeCanvas)
+            .background(MaterialTheme.colorScheme.background)
             .testTag(DetailTags.CONTENT),
     ) {
         item {
@@ -222,7 +219,7 @@ private fun ArticleDetail(
             Text(
                 text = "${article.newsSite.uppercase()} · ${formattedDate.uppercase()}",
                 style = MaterialTheme.typography.labelMedium,
-                color = VergeSecondaryText,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(
                     horizontal = MaterialTheme.spacing.medium,
                     vertical = MaterialTheme.spacing.medium,
@@ -233,7 +230,7 @@ private fun ArticleDetail(
             Text(
                 text = article.title,
                 style = MaterialTheme.typography.headlineLarge,
-                color = VergeHazardWhite,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
@@ -242,7 +239,7 @@ private fun ArticleDetail(
             Text(
                 text = article.summary,
                 style = MaterialTheme.typography.bodyLarge,
-                color = VergeHazardWhite.copy(alpha = 0.87f),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
             )
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
@@ -256,14 +253,14 @@ private fun ArticleDetail(
                     .testTag(DetailTags.READ_BUTTON),
                 shape = MaterialTheme.shapes.large,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = VergeJellyMint,
-                    contentColor = VergeCanvas,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                 ),
             ) {
                 Text(
                     text = stringResource(R.string.action_read_full).uppercase(),
                     style = MaterialTheme.typography.labelLarge,
-                    color = VergeCanvas,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))

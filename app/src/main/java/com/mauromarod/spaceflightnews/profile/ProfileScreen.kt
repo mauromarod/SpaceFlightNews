@@ -44,12 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mauromarod.spaceflightnews.R
-import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
-import com.mauromarod.spaceflightnews.core.designsystem.VergeConsoleMintBorder
-import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
-import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
-import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
-import com.mauromarod.spaceflightnews.core.designsystem.VergeUltraviolet
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.ThemePreference
 
@@ -77,7 +71,7 @@ fun ProfileScreen(
                     Text(
                         text = stringResource(R.string.profile_title).uppercase(),
                         style = MaterialTheme.typography.labelLarge,
-                        color = VergeHazardWhite,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
                 },
                 navigationIcon = {
@@ -85,14 +79,14 @@ fun ProfileScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                             contentDescription = stringResource(R.string.profile_cd_back),
-                            tint = VergeHazardWhite,
+                            tint = MaterialTheme.colorScheme.onBackground,
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = VergeCanvas),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
             )
         },
-        containerColor = VergeCanvas,
+        containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -111,7 +105,7 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(MaterialTheme.spacing.large))
 
-            HorizontalDivider(color = VergeHazardWhite.copy(alpha = 0.15f))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             if (uiState.isThemeEnabled) {
                 Spacer(Modifier.height(MaterialTheme.spacing.medium))
@@ -122,7 +116,7 @@ fun ProfileScreen(
                     )
                 }
                 Spacer(Modifier.height(MaterialTheme.spacing.medium))
-                HorizontalDivider(color = VergeHazardWhite.copy(alpha = 0.15f))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             }
 
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
@@ -133,8 +127,8 @@ fun ProfileScreen(
                     .fillMaxWidth()
                     .testTag(ProfileTags.SIGN_OUT_BUTTON),
                 shape = MaterialTheme.shapes.extraLarge,
-                border = BorderStroke(1.dp, VergeUltraviolet),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = VergeUltraviolet),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
@@ -164,13 +158,13 @@ private fun UserAvatar(isAnonymous: Boolean, email: String?) {
         modifier = Modifier
             .size(96.dp)
             .clip(CircleShape)
-            .background(VergeCanvas),
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = Icons.Outlined.RocketLaunch,
             contentDescription = stringResource(R.string.profile_cd_avatar),
-            tint = VergeJellyMint,
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(48.dp),
         )
     }
@@ -180,7 +174,7 @@ private fun UserAvatar(isAnonymous: Boolean, email: String?) {
     Text(
         text = label,
         style = MaterialTheme.typography.headlineSmall,
-        color = VergeHazardWhite,
+        color = MaterialTheme.colorScheme.onBackground,
     )
 
     if (!isAnonymous && email != null) {
@@ -188,7 +182,7 @@ private fun UserAvatar(isAnonymous: Boolean, email: String?) {
         Text(
             text = email,
             style = MaterialTheme.typography.labelMedium,
-            color = VergeSecondaryText,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -202,7 +196,7 @@ private fun SettingSection(title: String, content: @Composable () -> Unit) {
         Text(
             text = title.uppercase(),
             style = MaterialTheme.typography.labelLarge,
-            color = VergeSecondaryText,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         content()
     }
@@ -227,15 +221,15 @@ private fun ThemeChips(selected: ThemePreference, onSelect: (ThemePreference) ->
                     )
                 },
                 colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = VergeJellyMint,
-                    selectedLabelColor = VergeCanvas,
-                    labelColor = VergeSecondaryText,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 ),
                 border = FilterChipDefaults.filterChipBorder(
                     enabled = true,
                     selected = selected == pref,
-                    selectedBorderColor = VergeJellyMint,
-                    borderColor = VergeConsoleMintBorder,
+                    selectedBorderColor = MaterialTheme.colorScheme.primary,
+                    borderColor = MaterialTheme.colorScheme.outlineVariant,
                 ),
                 modifier = Modifier.testTag(
                     when (pref) {

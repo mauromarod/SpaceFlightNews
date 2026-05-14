@@ -47,10 +47,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
-import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
 import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
-import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.uicomponents.ArticleCard
@@ -97,8 +94,8 @@ fun NewsScreen(
     }
 
     Scaffold(
-        modifier = modifier.background(VergeCanvas),
-        containerColor = VergeCanvas,
+        modifier = modifier.background(MaterialTheme.colorScheme.background),
+        containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         Column(
@@ -137,7 +134,7 @@ private fun NewsHeader(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(VergeCanvas)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = MaterialTheme.spacing.medium),
     ) {
         Row(
@@ -156,7 +153,7 @@ private fun NewsHeader(
                 Icon(
                     imageVector = Icons.Outlined.AccountCircle,
                     contentDescription = stringResource(R.string.cd_open_profile),
-                    tint = VergeHazardWhite,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(28.dp),
                 )
             }
@@ -249,7 +246,7 @@ private fun ArticleList(
     LazyVerticalStaggeredGrid(
         modifier = modifier
             .fillMaxSize()
-            .background(VergeCanvas)
+            .background(MaterialTheme.colorScheme.background)
             .testTag(NewsTags.ARTICLE_LIST),
         columns = StaggeredGridCells.Fixed(2),
         contentPadding = PaddingValues(MaterialTheme.spacing.medium),
@@ -284,7 +281,7 @@ private fun ArticleList(
                     Text(
                         text = article.title,
                         style = MaterialTheme.typography.titleMedium,
-                        color = VergeHazardWhite,
+                        color = MaterialTheme.colorScheme.onBackground,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.padding(bottom = MaterialTheme.spacing.xSmall),
@@ -296,7 +293,7 @@ private fun ArticleList(
                             formatter.format(article.publishedAt.atZone(ZoneId.systemDefault()).toLocalDate()).uppercase()
                         }",
                         style = MaterialTheme.typography.labelMedium,
-                        color = VergeSecondaryText,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 },
             )
