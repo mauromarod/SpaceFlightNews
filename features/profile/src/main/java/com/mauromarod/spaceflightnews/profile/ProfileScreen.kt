@@ -48,6 +48,7 @@ import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.ThemePreference
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("LongMethod")
 @Composable
 fun ProfileScreen(
     onBack: () -> Unit,

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6">
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                snackbarHostState.showSnackbar(context.getString((uiState as LoginUiState.Error).messageRes))"
+        errorLine2="                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="features/auth/src/main/java/com/mauromarod/spaceflightnews/auth/LoginScreen.kt"
+            line="79"
+            column="43"/>
+    </issue>
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                    message = context.getString(mediatorRefresh.error.toFriendlyMessageRes()),"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="features/news/src/main/java/com/mauromarod/spaceflightnews/features/news/NewsScreen.kt"
+            line="203"
+            column="31"/>
+    </issue>
+</issues>

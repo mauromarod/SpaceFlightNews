@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6">
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                snackbarHostState.showSnackbar(context.getString((uiState as LoginUiState.Error).messageRes))"
+        errorLine2="                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mauromarod/spaceflightnews/auth/LoginScreen.kt"
+            line="79"
+            column="43"/>
+    </issue>
+</issues>

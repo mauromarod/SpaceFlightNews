@@ -18,7 +18,6 @@ class ArticleMapperTest {
         newsSite: String = "SpaceNews",
         summary: String = "Test summary",
         publishedAt: String = "2024-01-15T12:00:00Z",
-        updatedAt: String = "2024-01-15T12:00:00Z",
         featured: Boolean = false
     ) = ArticleDto(
         id = id, title = title, url = url, imageUrl = imageUrl,

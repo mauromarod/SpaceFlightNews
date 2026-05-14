@@ -195,6 +195,7 @@ class SearchRemoteMediatorTest {
         leadingPlaceholderCount = 0
     )
 
+    @Suppress("UnusedPrivateMember")
     private fun stateWithItems(items: List<ArticleEntity>): PagingState<Int, ArticleEntity> {
         val page = PagingSource.LoadResult.Page<Int, ArticleEntity>(
             data = items, prevKey = null, nextKey = null

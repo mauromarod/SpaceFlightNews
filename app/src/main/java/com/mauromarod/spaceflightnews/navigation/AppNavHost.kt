@@ -82,6 +82,7 @@ fun AppNavHost(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun SinglePaneLayout(
     startDestination: String,

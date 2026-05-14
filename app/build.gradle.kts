@@ -65,6 +65,10 @@ android {
         }
     }
 
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
+
     bundle {
         language { enableSplit = true }
         density { enableSplit = true }

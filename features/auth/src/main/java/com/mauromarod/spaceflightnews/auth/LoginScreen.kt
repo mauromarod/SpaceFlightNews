@@ -132,6 +132,7 @@ fun LoginScreen(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun LoginForm(
     isLoading: Boolean,

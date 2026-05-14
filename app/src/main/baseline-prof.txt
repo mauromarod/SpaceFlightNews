@@ -1,14 +1,18 @@
 # Baseline Profile — Space Flight News
 #
-# Generated manually from the critical user paths:
-#   1. Cold startup (Application + MainActivity + AppNavHost + NewsScreen)
-#   2. Article list scroll (LazyColumn, ArticleCard, NetworkImage)
-#   3. Search (SearchBar, debounce flow, FTS query)
-#   4. Navigation to detail (NavController, DetailScreen)
+# Generated manually from critical user paths:
+#   1. Cold startup (Application + MainActivity + AppNavHost)
+#   2. Login (LoginScreen + LoginViewModel + auth)
+#   3. Article list (NewsScreen + ArticleCard + Paging + NetworkImage)
+#   4. Search (SearchBar + FTS query)
+#   5. Article detail (DetailScreen + DetailViewModel + shared element transition)
+#   6. Profile (ProfileScreen + theme toggle + sign out)
+#   7. Rotation (TwoPaneLayout + TwoPaneContent + BackHandler)
+#   8. Offline (snackbar + cached data display)
 #
-# Format: HSP method descriptors. H = hot (JIT-compiled), S = startup,
-# P = post-startup. Prefix with L for class references.
-# The profileinstaller library installs this profile at APK install time.
+# Format: HSP = Hot + Startup + Post-startup
+# L prefix = class reference, →method descriptor = method
+# profileinstaller installs this at APK install time.
 
 # ── Application & MainActivity ──────────────────────────────────────────────
 HSPLcom/mauromarod/spaceflightnews/SpaceFlightNewsApplication;->onCreate()V
@@ -16,26 +20,90 @@ HSPLcom/mauromarod/spaceflightnews/MainActivity;->onCreate(Landroid/os/Bundle;)V
 
 # ── Navigation ───────────────────────────────────────────────────────────────
 HSPLcom/mauromarod/spaceflightnews/navigation/AppNavHostKt;->AppNavHost(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/navigation/Screen;-><clinit>()V
+HSPLcom/mauromarod/spaceflightnews/navigation/AppNavHostKt;->SinglePaneLayout(Ljava/lang/String;Ljava/lang/Integer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/navigation/AppNavHostKt;->TwoPaneLayout(Ljava/lang/String;Ljava/lang/Integer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/navigation/AppNavHostKt;->TwoPaneContent(Ljava/lang/Integer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/navigation/AppNavHostKt;->EmptyDetailPane(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+
+# ── Login ────────────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/auth/LoginScreenKt;->LoginScreen(Lkotlin/jvm/functions/Function0;Lcom/mauromarod/spaceflightnews/auth/LoginViewModel;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/auth/LoginScreenKt;->LoginHeader(Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/auth/LoginScreenKt;->LoginForm(ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/auth/LoginScreenKt;->LoginModeSwitch(ZZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/auth/LoginScreenKt;->LoginGuestButton(ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/auth/LoginViewModel;-><init>(Lcom/mauromarod/spaceflightnews/core/domain/repository/AuthRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/AnalyticsRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/RemoteConfigRepository;)V
+HSPLcom/mauromarod/spaceflightnews/auth/LoginViewModel;->signInAnonymously()V
+HSPLcom/mauromarod/spaceflightnews/auth/LoginViewModel;->signInWithEmail(Ljava/lang/String;Ljava/lang/String;)V
 
 # ── News screen ──────────────────────────────────────────────────────────────
-HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->NewsScreen(Landroidx/compose/runtime/Composer;I)V
-HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->NewsContent(Landroidx/paging/compose/LazyPagingItems;Landroidx/compose/foundation/lazy/LazyListState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->ArticleList(Landroidx/paging/compose/LazyPagingItems;Lkotlin/jvm/functions/Function1;Landroidx/compose/foundation/lazy/LazyListState;Landroidx/compose/runtime/Composer;I)V
-HSPLcom/mauromarod/spaceflightnews/features/news/NewsViewModel;-><init>(Lcom/mauromarod/spaceflightnews/core/domain/usecase/GetArticlesUseCase;Lcom/mauromarod/spaceflightnews/core/domain/usecase/SearchArticlesUseCase;Lcom/mauromarod/spaceflightnews/core/domain/repository/ArticleRepository;Landroidx/lifecycle/SavedStateHandle;)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->NewsScreen(Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lcom/mauromarod/spaceflightnews/features/news/NewsViewModel;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->NewsHeader(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->NewsContent(Landroidx/paging/compose/LazyPagingItems;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->ArticleList(Landroidx/paging/compose/LazyPagingItems;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsScreenKt;->ArticleImageModifier(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Landroidx/compose/animation/SharedTransitionScope;Landroidx/compose/animation/AnimatedVisibilityScope;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
+HSPLcom/mauromarod/spaceflightnews/features/news/NewsViewModel;-><init>(Landroidx/lifecycle/SavedStateHandle;Lcom/mauromarod/spaceflightnews/core/data/paging/ArticlePagingProvider;Lcom/mauromarod/spaceflightnews/core/domain/repository/ArticleRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/AnalyticsRepository;)V
 HSPLcom/mauromarod/spaceflightnews/features/news/NewsViewModel;->onEvent(Lcom/mauromarod/spaceflightnews/features/news/NewsUiEvent;)V
 
-# ── Detail screen ────────────────────────────────────────────────────────────
-HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->DetailScreen(ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-HSPLcom/mauromarod/spaceflightnews/features/detail/DetailViewModel;-><init>(Lcom/mauromarod/spaceflightnews/core/domain/usecase/GetArticleDetailUseCase;Landroidx/lifecycle/SavedStateHandle;)V
+# ── Search bar ───────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/ArticleSearchBarKt;->ArticleSearchBar(Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 
-# ── UI Components (hot during list scroll) ───────────────────────────────────
-HSPLcom/mauromarod/spaceflightnews/core/uicomponents/ArticleCardKt;->ArticleCard(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+# ── Detail screen ────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->DetailScreen(Lkotlin/jvm/functions/Function0;Lcom/mauromarod/spaceflightnews/features/detail/DetailViewModel;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->DetailTopBar(Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->DetailEffectHandler(Lcom/mauromarod/spaceflightnews/features/detail/DetailViewModel;Landroidx/lifecycle/Lifecycle;Landroidx/compose/material3/SnackbarHostState;Ljava/lang/String;Landroid/content/Context;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->DetailLoadingState(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->ArticleDetail(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->ArticleDetailImage(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Landroidx/compose/animation/SharedTransitionScope;Landroidx/compose/animation/AnimatedVisibilityScope;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->ArticleDetailMeta(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->ArticleDetailTitle(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->ArticleDetailSummary(Lcom/mauromarod/spaceflightnews/core/domain/model/Article;Landroidx/compose/runtime/Composer;I)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailScreenKt;->ArticleDetailReadButton(Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailViewModel;-><init>(Landroidx/lifecycle/SavedStateHandle;Lcom/mauromarod/spaceflightnews/core/domain/usecase/GetArticleDetailUseCase;Lcom/mauromarod/spaceflightnews/core/domain/repository/AnalyticsRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/CrashReporter;)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailViewModel;->setArticleId(I)V
+HSPLcom/mauromarod/spaceflightnews/features/detail/DetailViewModel;->onEvent(Lcom/mauromarod/spaceflightnews/features/detail/DetailUiEvent;)V
+
+# ── Profile screen ───────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/profile/ProfileScreenKt;->ProfileScreen(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lcom/mauromarod/spaceflightnews/profile/ProfileViewModel;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/profile/ProfileScreenKt;->ProfileSignOutButton(Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/profile/ProfileScreenKt;->ThemeChips(Lcom/mauromarod/spaceflightnews/core/domain/model/ThemePreference;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/profile/ProfileViewModel;-><init>(Lcom/mauromarod/spaceflightnews/core/domain/repository/AuthRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/UserPreferencesRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/RemoteConfigRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/AnalyticsRepository;)V
+HSPLcom/mauromarod/spaceflightnews/profile/ProfileViewModel;->setTheme(Lcom/mauromarod/spaceflightnews/core/domain/model/ThemePreference;)V
+HSPLcom/mauromarod/spaceflightnews/profile/ProfileViewModel;->signOut()V
+
+# ── UI Components ────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/ArticleCardKt;->ArticleCard(Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 HSPLcom/mauromarod/spaceflightnews/core/uicomponents/NetworkImageKt;->NetworkImage(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/layout/ContentScale;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/ShimmerBoxKt;->ShimmerBox(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/LoadingStateKt;->LoadingState(Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/ErrorStateKt;->ErrorState(Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+HSPLcom/mauromarod/spaceflightnews/core/uicomponents/EmptyStateKt;->EmptyState(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 
 # ── Data layer (startup critical path) ──────────────────────────────────────
-HSPLcom/mauromarod/spaceflightnews/core/data/repository/ArticleRepositoryImpl;-><init>(Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;Lcom/mauromarod/spaceflightnews/core/database/AppDatabase;Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;)V
-HSPLcom/mauromarod/spaceflightnews/core/data/repository/ArticleRepositoryImpl;->getArticles()Lkotlinx/coroutines/flow/Flow;
+HSPLcom/mauromarod/spaceflightnews/core/data/repository/ArticleRepositoryImpl;-><init>(Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;)V
+HSPLcom/mauromarod/spaceflightnews/core/data/repository/ArticleRepositoryImpl;->observeArticles()Lkotlinx/coroutines/flow/Flow;
+HSPLcom/mauromarod/spaceflightnews/core/data/paging/ArticlePagingProviderImpl;-><init>(Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;Lcom/mauromarod/spaceflightnews/core/database/AppDatabase;Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;Lcom/mauromarod/spaceflightnews/core/domain/repository/PerformanceTracer;Lcom/mauromarod/spaceflightnews/core/domain/repository/AnalyticsRepository;)V
+HSPLcom/mauromarod/spaceflightnews/core/data/paging/ArticlePagingProviderImpl;->observeArticleFeed()Lkotlinx/coroutines/flow/Flow;
+HSPLcom/mauromarod/spaceflightnews/core/data/mediator/ArticleRemoteMediator;-><init>(Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;Lcom/mauromarod/spaceflightnews/core/database/AppDatabase;Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;Lcom/mauromarod/spaceflightnews/core/domain/repository/PerformanceTracer;Lcom/mauromarod/spaceflightnews/core/domain/repository/AnalyticsRepository;)V
 HSPLcom/mauromarod/spaceflightnews/core/data/mediator/ArticleRemoteMediator;->load(Landroidx/paging/LoadType;Landroidx/paging/PagingState;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+HSPLcom/mauromarod/spaceflightnews/core/data/mediator/SearchRemoteMediator;-><init>(Ljava/lang/String;Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;)V
+HSPLcom/mauromarod/spaceflightnews/core/data/mediator/SearchRemoteMediator;->load(Landroidx/paging/LoadType;Landroidx/paging/PagingState;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 
-# ── Design system (startup — theme application) ──────────────────────────────
+# ── Database ─────────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/core/database/AppDatabase;-><clinit>()V
+HSPLcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao$DefaultImpls;->pagingSource(Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;)Landroidx/paging/PagingSource;
+HSPLcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao$DefaultImpls;->getLastFetchedAt(Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+
+# ── Network ──────────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/core/network/adapter/NetworkResultCallAdapterFactory;->create()Lcom/mauromarod/spaceflightnews/core/network/adapter/NetworkResultCallAdapterFactory;
+HSPLcom/mauromarod/spaceflightnews/core/network/interceptor/RetryInterceptor;->intercept(Lokhttp3/Interceptor$Chain;)Lokhttp3/Response;
+
+# ── DI / Hilt ────────────────────────────────────────────────────────────────
+HSPLcom/mauromarod/spaceflightnews/di/RepositoryModule;->provideArticleRepository(Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;)Lcom/mauromarod/spaceflightnews/core/domain/repository/ArticleRepository;
+HSPLcom/mauromarod/spaceflightnews/di/RepositoryModule;->provideArticlePagingProvider(Lcom/mauromarod/spaceflightnews/core/network/api/ArticleApi;Lcom/mauromarod/spaceflightnews/core/database/AppDatabase;Lcom/mauromarod/spaceflightnews/core/database/dao/ArticleDao;Lcom/mauromarod/spaceflightnews/core/database/dao/RemoteKeysDao;Lcom/mauromarod/spaceflightnews/core/domain/repository/PerformanceTracer;Lcom/mauromarod/spaceflightnews/core/domain/repository/AnalyticsRepository;)Lcom/mauromarod/spaceflightnews/core/data/paging/ArticlePagingProvider;
+HSPLcom/mauromarod/spaceflightnews/di/UseCaseModule;->provideGetArticlesUseCase(Lcom/mauromarod/spaceflightnews/core/domain/repository/ArticleRepository;)Lcom/mauromarod/spaceflightnews/core/domain/usecase/GetArticlesUseCase;
+HSPLcom/mauromarod/spaceflightnews/di/UseCaseModule;->provideGetArticleDetailUseCase(Lcom/mauromarod/spaceflightnews/core/domain/repository/ArticleRepository;Lcom/mauromarod/spaceflightnews/core/domain/repository/RemoteConfigRepository;)Lcom/mauromarod/spaceflightnews/core/domain/usecase/GetArticleDetailUseCase;
+HSPLcom/mauromarod/spaceflightnews/di/DatabaseModule;->provideAppDatabase(Landroid/content/Context;)Lcom/mauromarod/spaceflightnews/core/database/AppDatabase;
+
+# ── Design system (startup — theme) ──────────────────────────────────────────
 HSPLcom/mauromarod/spaceflightnews/core/designsystem/ThemeKt;->SpaceFlightNewsTheme(ZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
