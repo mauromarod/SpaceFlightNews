@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.androidx.baselineprofile)
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.firebase.appdistribution")
 }
 
 // Reads from local.properties first, then falls back to environment variables.
@@ -108,6 +109,12 @@ composeCompiler {
         reportsDestination = layout.buildDirectory.dir("compose_reports")
         metricsDestination = layout.buildDirectory.dir("compose_reports")
     }
+}
+
+firebaseAppDistribution {
+    artifactType = "AAB"
+    releaseNotes = "Release 1.0.0"
+    groups = "internal-testers"
 }
 
 dependencies {
