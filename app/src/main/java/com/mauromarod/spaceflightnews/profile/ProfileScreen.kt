@@ -121,25 +121,7 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
 
-            OutlinedButton(
-                onClick = viewModel::signOut,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag(ProfileTags.SIGN_OUT_BUTTON),
-                shape = MaterialTheme.shapes.extraLarge,
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
-                    contentDescription = null,
-                    modifier = Modifier.padding(end = MaterialTheme.spacing.small),
-                )
-                Text(
-                    text = stringResource(R.string.profile_sign_out).uppercase(),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
+            ProfileSignOutButton(onSignOut = viewModel::signOut)
 
             Spacer(Modifier.height(MaterialTheme.spacing.large))
         }
@@ -240,6 +222,29 @@ private fun ThemeChips(selected: ThemePreference, onSelect: (ThemePreference) ->
                 ),
             )
         }
+    }
+}
+
+@Composable
+private fun ProfileSignOutButton(onSignOut: () -> Unit) {
+    OutlinedButton(
+        onClick = onSignOut,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(ProfileTags.SIGN_OUT_BUTTON),
+        shape = MaterialTheme.shapes.extraLarge,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.secondary),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
+            contentDescription = null,
+            modifier = Modifier.padding(end = MaterialTheme.spacing.small),
+        )
+        Text(
+            text = stringResource(R.string.profile_sign_out).uppercase(),
+            style = MaterialTheme.typography.labelLarge,
+        )
     }
 }
 
