@@ -3,6 +3,8 @@ package com.mauromarod.spaceflightnews.features.detail
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -66,51 +68,19 @@ fun DetailScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val noBrowserMsg = stringResource(R.string.error_no_browser)
 
-    LaunchedEffect(Unit) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.uiEffect.collect { effect ->
-                when (effect) {
-                    is DetailUiEffect.OpenUrl -> {
-                        try {
-                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(effect.url)))
-                        } catch (e: ActivityNotFoundException) {
-                            snackbarHostState.showSnackbar(noBrowserMsg)
-                        }
-                    }
-                    is DetailUiEffect.ShowSnackbar -> snackbarHostState.showSnackbar(effect.message)
-                }
-            }
-        }
-    }
+    DetailEffectHandler(
+        viewModel = viewModel,
+        lifecycle = lifecycle,
+        snackbarHostState = snackbarHostState,
+        noBrowserMsg = noBrowserMsg,
+        context = context,
+    )
 
     Scaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.background),
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.topbar_title).uppercase(),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onBackground,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier.testTag(DetailTags.BACK_BUTTON),
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_back),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-            )
-        },
+        topBar = { DetailTopBar(onBack = onBack) },
     ) { innerPadding ->
         when (val state = uiState) {
             is DetailUiState.Loading -> DetailLoadingState(modifier = Modifier.padding(innerPadding))
@@ -127,6 +97,58 @@ fun DetailScreen(
             )
         }
     }
+}
+
+@Composable
+private fun DetailEffectHandler(
+    viewModel: DetailViewModel,
+    lifecycle: androidx.lifecycle.Lifecycle,
+    snackbarHostState: SnackbarHostState,
+    noBrowserMsg: String,
+    context: android.content.Context,
+) {
+    LaunchedEffect(Unit) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.uiEffect.collect { effect ->
+                when (effect) {
+                    is DetailUiEffect.OpenUrl -> {
+                        try {
+                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(effect.url)))
+                        } catch (e: ActivityNotFoundException) {
+                            snackbarHostState.showSnackbar(noBrowserMsg)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DetailTopBar(onBack: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = stringResource(R.string.topbar_title).uppercase(),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.testTag(DetailTags.BACK_BUTTON),
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = stringResource(R.string.cd_back),
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+    )
 }
 
 @Composable
@@ -178,13 +200,6 @@ private fun ArticleDetail(
     onOpenUrl: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val formatter = remember {
-        DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.getDefault())
-    }
-    val formattedDate = remember(article.publishedAt) {
-        formatter.format(article.publishedAt.atZone(ZoneId.systemDefault()).toLocalDate())
-    }
-
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
 
@@ -194,77 +209,111 @@ private fun ArticleDetail(
             .background(MaterialTheme.colorScheme.background)
             .testTag(DetailTags.CONTENT),
     ) {
-        item {
-            NetworkImage(
-                url = article.imageUrl,
-                contentDescription = article.title,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(16f / 9f)
-                    .then(
-                        if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-                            with(sharedTransitionScope) {
-                                Modifier.sharedElement(
-                                    rememberSharedContentState(key = "image-${article.id}"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                )
-                            }
-                        } else Modifier
-                    )
+        item { ArticleDetailImage(article, sharedTransitionScope, animatedVisibilityScope) }
+        item { ArticleDetailMeta(article) }
+        item { ArticleDetailTitle(article) }
+        item { ArticleDetailSummary(article) }
+        item { ArticleDetailReadButton(onOpenUrl) }
+    }
+}
+
+@Composable
+private fun ArticleDetailImage(
+    article: Article,
+    sharedTransitionScope: SharedTransitionScope?,
+    animatedVisibilityScope: AnimatedVisibilityScope?,
+) {
+    NetworkImage(
+        url = article.imageUrl,
+        contentDescription = article.title,
+        contentScale = ContentScale.Fit,
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(16f / 9f)
+            .then(imageModifier(article, sharedTransitionScope, animatedVisibilityScope)),
+    )
+}
+
+@Composable
+private fun imageModifier(
+    article: Article,
+    sharedTransitionScope: SharedTransitionScope?,
+    animatedVisibilityScope: AnimatedVisibilityScope?,
+): Modifier {
+    if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+        with(sharedTransitionScope) {
+            return Modifier.sharedElement(
+                rememberSharedContentState(key = "image-${article.id}"),
+                animatedVisibilityScope = animatedVisibilityScope,
             )
-        }
-        item {
-            Text(
-                text = "${article.newsSite.uppercase()} · ${formattedDate.uppercase()}",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(
-                    horizontal = MaterialTheme.spacing.medium,
-                    vertical = MaterialTheme.spacing.medium,
-                ),
-            )
-        }
-        item {
-            Text(
-                text = article.title,
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
-        }
-        item {
-            Text(
-                text = article.summary,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
-            )
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-        }
-        item {
-            Button(
-                onClick = onOpenUrl,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = MaterialTheme.spacing.medium)
-                    .testTag(DetailTags.READ_BUTTON),
-                shape = MaterialTheme.shapes.large,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-            ) {
-                Text(
-                    text = stringResource(R.string.action_read_full).uppercase(),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                )
-            }
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
         }
     }
+    return Modifier
+}
+
+@Composable
+private fun ArticleDetailMeta(article: Article) {
+    val formatter = remember {
+        DateTimeFormatter.ofPattern("MMMM d, yyyy", Locale.getDefault())
+    }
+    val formattedDate = remember(article.publishedAt) {
+        formatter.format(article.publishedAt.atZone(ZoneId.systemDefault()).toLocalDate())
+    }
+
+    Text(
+        text = "${article.newsSite.uppercase()} · ${formattedDate.uppercase()}",
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(
+            horizontal = MaterialTheme.spacing.medium,
+            vertical = MaterialTheme.spacing.medium,
+        ),
+    )
+}
+
+@Composable
+private fun ArticleDetailTitle(article: Article) {
+    Text(
+        text = article.title,
+        style = MaterialTheme.typography.headlineLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
+    )
+    Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium))
+}
+
+@Composable
+private fun ArticleDetailSummary(article: Article) {
+    Text(
+        text = article.summary,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
+        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
+    )
+    Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
+}
+
+@Composable
+private fun ArticleDetailReadButton(onOpenUrl: () -> Unit) {
+    Button(
+        onClick = onOpenUrl,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = MaterialTheme.spacing.medium)
+            .testTag(DetailTags.READ_BUTTON),
+        shape = MaterialTheme.shapes.large,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+    ) {
+        Text(
+            text = stringResource(R.string.action_read_full).uppercase(),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onPrimary,
+        )
+    }
+    Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
 }
 
 object DetailTags {
