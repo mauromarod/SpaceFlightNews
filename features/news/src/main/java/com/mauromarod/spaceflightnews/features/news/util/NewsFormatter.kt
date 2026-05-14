@@ -1,7 +1,6 @@
 package com.mauromarod.spaceflightnews.features.news.util
 
 import com.mauromarod.spaceflightnews.features.news.R
-import java.io.IOException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 

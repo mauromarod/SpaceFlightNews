@@ -2,7 +2,6 @@ package com.mauromarod.spaceflightnews.features.news
 
 import androidx.lifecycle.SavedStateHandle
 import com.mauromarod.spaceflightnews.core.data.paging.ArticlePagingProvider
-import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
 import io.mockk.coEvery
@@ -124,14 +123,4 @@ class NewsViewModelTest {
         analyticsRepository = analyticsRepository,
     )
 
-    private fun fakeArticle(id: Int) = Article(
-        id = id,
-        title = "Article $id",
-        summary = "Summary $id",
-        imageUrl = null,
-        newsSite = "Space.com",
-        publishedAt = Instant.now(),
-        url = "https://example.com/$id",
-        featured = false
-    )
 }

@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.CircularProgressIndicator
@@ -231,6 +233,24 @@ private fun NewsContent(
 }
 
 @Composable
+private fun ArticleImageModifier(
+    article: Article,
+    sharedTransitionScope: SharedTransitionScope?,
+    animatedVisibilityScope: AnimatedVisibilityScope?,
+): Modifier {
+    if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+        with(sharedTransitionScope) {
+            return Modifier.sharedElement(
+                rememberSharedContentState(key = "image-${article.id}"),
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+        }
+    }
+    return Modifier
+}
+
+@Suppress("LongMethod")
+@Composable
 private fun ArticleList(
     articles: LazyPagingItems<Article>,
     onArticleTapped: (Int) -> Unit,
@@ -251,7 +271,6 @@ private fun ArticleList(
         contentPadding = PaddingValues(MaterialTheme.spacing.medium),
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small),
         verticalItemSpacing = MaterialTheme.spacing.small,
-
     ) {
         items(
             count = articles.itemCount,
@@ -266,14 +285,7 @@ private fun ArticleList(
                         url = article.imageUrl,
                         contentScale = ContentScale.FillWidth,
                         contentDescription = article.title,
-                        modifier = if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-                            with(sharedTransitionScope) {
-                                Modifier.sharedElement(
-                                    rememberSharedContentState(key = "image-${article.id}"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                )
-                            }
-                        } else Modifier,
+                        modifier = ArticleImageModifier(article, sharedTransitionScope, animatedVisibilityScope),
                     )
                 },
                 headline = {
@@ -306,7 +318,7 @@ private fun ArticleList(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.padding(MaterialTheme.spacing.medium),
-                color = MaterialTheme.colorScheme.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         strokeWidth = 2.dp,
                     )
                 }

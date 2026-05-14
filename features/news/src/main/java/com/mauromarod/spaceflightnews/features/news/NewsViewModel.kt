@@ -73,7 +73,6 @@ class NewsViewModel @Inject constructor(
                     }
                 }
             }
-            is NewsUiEvent.RetryClicked -> Unit
         }
     }
 
