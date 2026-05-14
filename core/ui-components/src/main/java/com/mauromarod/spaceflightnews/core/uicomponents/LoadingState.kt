@@ -21,10 +21,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import com.mauromarod.spaceflightnews.core.designsystem.SpaceFlightNewsTheme
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
-import kotlin.random.Random
 
 @Composable
 fun LoadingState(modifier: Modifier = Modifier) {
@@ -47,6 +47,7 @@ fun LoadingState(modifier: Modifier = Modifier) {
 
 @Composable
 private fun ArticleCardSkeleton() {
+    val skeletonHeight = remember { (64..256).random() }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -55,7 +56,7 @@ private fun ArticleCardSkeleton() {
     ) {
         ShimmerBox(
             modifier = Modifier
-                .height(Random.nextInt(64, 256).dp)
+                .height(skeletonHeight.dp)
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
                 .clip(MaterialTheme.shapes.small)

@@ -1,6 +1,7 @@
 package com.mauromarod.spaceflightnews.core.uicomponents
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -68,7 +69,7 @@ fun ArticleSearchBar(
             }
         },
         singleLine = true,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(2.dp),
+        shape = RoundedCornerShape(2.dp),
         colors = OutlinedTextFieldDefaults.colors(
             focusedContainerColor = VergeCanvas,
             unfocusedContainerColor = VergeCanvas,

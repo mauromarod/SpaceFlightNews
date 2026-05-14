@@ -57,7 +57,7 @@ fun SpaceFlightNewsTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) VergeDarkColorScheme else VergeLightColorScheme
-    CompositionLocalProvider(LocalVergeSpacing provides VergeSpacing()) {
+    CompositionLocalProvider(LocalVergeSpacing provides VergeSpacing) {
         MaterialTheme(
             colorScheme = colorScheme,
             typography = VergeTypography,
