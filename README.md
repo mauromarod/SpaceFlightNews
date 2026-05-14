@@ -20,9 +20,10 @@ Space Flight News consumes the [Space Flight News API](https://api.spaceflightne
 - Per-user theme preference persisted with DataStore
 - Adaptive two-pane layout on landscape tablets with rotation state persistence
 - Real-time search with debounce, FTS, and offline fallback
-- Shared element transitions between list and detail
+- Fade navigation transitions between list and detail
 - Spanish localization
 - Feature flags via Firebase Remote Config
+- Baseline profile for AOT compilation at install time
 
 ---
 
@@ -32,15 +33,18 @@ The project is structured as a multi-module Gradle build. Each module has a well
 
 ```
 :app
-├── :features:news          Search + article list
-├── :features:detail        Article detail
-├── :core:domain            Pure Kotlin: entities, use cases, repository interfaces
-├── :core:data              Repository implementations, Paging 3 RemoteMediator
-├── :core:network           Retrofit, OkHttp, NetworkResult<T>
-├── :core:database          Room, DAOs, PagingSource
-├── :core:designsystem      Design tokens: color, typography, shape, spacing
-├── :core:ui-components     Atomic Compose widgets (Slot-based APIs)
-└── :core:common            Shared extensions
+├── :features:auth           Login & authentication
+├── :features:profile        User profile, theme & language settings
+├── :features:news           Search + article list
+├── :features:detail         Article detail
+├── :macrobenchmark          Performance benchmarks & baseline profile generation
+├── :core:domain             Pure Kotlin: entities, use cases, repository interfaces
+├── :core:data               Repository implementations, Paging 3 RemoteMediator
+├── :core:network            Retrofit, OkHttp, NetworkResult<T>
+├── :core:database           Room, DAOs, PagingSource
+├── :core:designsystem       Design tokens: color, typography, shape, spacing
+├── :core:ui-components      Atomic Compose widgets (Slot-based APIs)
+└── :core:common             Shared extensions
 ```
 
 → Full architecture documentation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
@@ -112,29 +116,46 @@ Or open the project in Android Studio and run the `app` configuration.
 
 ```bash
 # Unit tests (all modules)
-./gradlew testDebugUnitTest
+./gradlew testDebugUnitTest :core:domain:test
 
 # Snapshot tests — verify against golden images
 ./gradlew verifyRoborazziDebug
 
 # Snapshot tests — record new goldens
 ./gradlew recordRoborazziDebug
+
+# Macrobenchmark (requires device)
+./gradlew :macrobenchmark:connectedBenchmarkAndroidTest
 ```
 
-### Lint & Static Analysis
+### Generate Baseline Profile
+
+Generates a `baseline-prof.txt` for AOT compilation (requires connected device):
 
 ```bash
-./gradlew lint
-./gradlew detekt
+./gradlew :app:generateReleaseBaselineProfile
 ```
 
-### E2E Tests (Maestro)
+The generated profile is copied to `app/src/main/baseline-prof.txt` and included in release builds.
 
-Requires a connected device or emulator with the debug build installed.
+### Maestro E2E Tests
+
+Requires a connected device with the debug APK installed (`./gradlew :app:installDebug`).
 
 ```bash
 maestro test maestro/happy_path.yaml
 maestro test maestro/rotation_article_persistence.yaml
+```
+
+For release builds, change `appId` in the YAML files from `com.mauromarod.spaceflightnews.debug` to `com.mauromarod.spaceflightnews`.
+
+### Lint & Static Analysis
+
+```bash
+./gradlew lintDebug
+for mod in core:domain core:database core:data core:network core:designsystem core:ui-components features:auth features:profile features:news features:detail app; do
+  ./gradulesq ":$mod:detekt"
+done
 ```
 
 ---
@@ -169,8 +190,11 @@ maestro test maestro/rotation_article_persistence.yaml
 SpaceFlightNews/
 ├── app/                    Application module (entry point, DI composition root, Firebase impls)
 ├── features/
+│   ├── auth/               Login & authentication (email/password + anonymous)
+│   ├── profile/            User profile, theme & language settings
 │   ├── news/               Article list + search screen
 │   └── detail/             Article detail screen
+├── macrobenchmark/         Performance benchmarks & baseline profile generation
 ├── core/
 │   ├── domain/             Business logic (pure Kotlin, no Android/Firebase deps)
 │   ├── data/               Repository implementations, RemoteMediator
@@ -192,10 +216,12 @@ The GitHub Actions pipeline runs on every push and pull request:
 
 | Job | Trigger | Description |
 |---|---|---|
-| `lint` | push / PR | Android lint + Detekt static analysis |
+| `lint` | push / PR | Android lint + Detekt per module |
+| `ktlint` | push / PR | Kotlin code style check |
 | `unit-tests` | push / PR | Unit tests across all modules |
 | `instrumented-tests` | push / PR | Compose UI tests on emulator |
-| `build-release` | push to `main` | Signed AAB ready for Play Store upload |
+| `build-debug` | push / PR | Debug APK |
+| `build-release` | push to `main` | Baseline profile generation + signed AAB for Play Store upload |
 
 Release signing credentials are injected via GitHub Secrets (`RELEASE_KEYSTORE_BASE64`, `RELEASE_STORE_PASSWORD`, `RELEASE_KEY_ALIAS`, `RELEASE_KEY_PASSWORD`).
 

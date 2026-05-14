@@ -21,7 +21,7 @@ split "business logic" from "UI layer" so regressions are visible regardless.
 
 ---
 
-## Stage 10 — Baseline (2026-05-11)
+## Stage 10 — Baseline (2026-05-14)
 
 ### core:data · instruction coverage: **91%**
 
@@ -34,19 +34,19 @@ split "business logic" from "UI layer" so regressions are visible regardless.
 | `ArticleMapperKt` | 100% | 100% | |
 | **Total** | **96%** lines | **99%** branches | |
 
-### features:news · ViewModel coverage: **97% lines / 88% branches**
+### features:news · ViewModel coverage: **100% lines / 100% branches**
 
 | Class | Lines | Branches | Notes |
 |---|---|---|---|
-| `NewsViewModel` | 97% | 88% | missing branch: `RetryClicked` no-op path |
+| `NewsViewModel` | 100% | 100% | RetryClicked removed (dead code), ArticleTapped simplified |
 | `NewsScreenKt` | 0% | 0% | Compose UI — not unit-testable |
 | **Module total** | 18% | 8% | diluted by Compose |
 
-### features:detail · ViewModel coverage: **96% lines / 90% branches**
+### features:detail · ViewModel coverage: **100% lines / 100% branches**
 
 | Class | Lines | Branches | Notes |
 |---|---|---|---|
-| `DetailViewModel` | 96% | 90% | |
+| `DetailViewModel` | 100% | 100% | NavigateBack removed (dead code) |
 | `DetailScreenKt` | 0% | 0% | Compose UI — not unit-testable |
 | **Module total** | 22% | 25% | diluted by Compose |
 
@@ -73,5 +73,6 @@ All Use Cases and domain models covered. Enforced via ArchUnit (zero Android imp
 ## Coverage history
 
 | Stage | Date | core:data (instr.) | NewsViewModel (lines) | DetailViewModel (lines) | Notes |
-|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|
 | Stage 10 — baseline | 2026-05-11 | 91% | 97% | 96% | initial test suite |
+| Release polish | 2026-05-14 | 91% | 100% | 100% | removed dead code paths (RetryClicked, NavigateBack) |

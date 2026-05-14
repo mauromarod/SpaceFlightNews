@@ -35,14 +35,28 @@
 
 ```mermaid
 graph TD
+    app --> features_auth[:features:auth]
+    app --> features_profile[:features:profile]
     app --> features_news[:features:news]
     app --> features_detail[:features:detail]
+    app --> macrobenchmark[:macrobenchmark]
     app --> core_designsystem[:core:designsystem]
 
-    features_news --> core_domain[:core:domain]
+    features_auth --> core_domain[:core:domain]
+    features_auth --> core_designsystem
+    features_auth --> core_ui_components[:core:ui-components]
+    features_auth --> core_common[:core:common]
+
+    features_profile --> core_domain
+    features_profile --> core_designsystem
+    features_profile --> core_ui_components
+    features_profile --> core_common
+
+    features_news --> core_domain
+    features_news --> core_data[:core:data]
     features_news --> core_designsystem
-    features_news --> core_ui_components[:core:ui-components]
-    features_news --> core_common[:core:common]
+    features_news --> core_ui_components
+    features_news --> core_common
 
     features_detail --> core_domain
     features_detail --> core_designsystem
@@ -51,7 +65,7 @@ graph TD
 
     core_domain --> core_common
 
-    core_data[:core:data] --> core_domain
+    core_data --> core_domain
     core_data --> core_network[:core:network]
     core_data --> core_database[:core:database]
     core_data --> core_common
@@ -70,6 +84,7 @@ graph TD
 - Feature modules depend on `:core:domain` interfaces, never on `:core:data` or `:core:network` directly
 - `:core:ui-components` depends only on `:core:designsystem`, never on domain models
 - `:app` is the only module allowed to depend on all others (composition root for Hilt)
+- `:macrobenchmark` is a test-only module using `com.android.test` plugin — never included in release builds
 
 ---
 
@@ -77,9 +92,13 @@ graph TD
 
 ### Presentation — `:features:*`
 
+- **`:features:news`** — Article feed with offline-first caching and search
+- **`:features:detail`** — Article detail with URL external navigation
+- **`:features:auth`** — Login/sign-up with email/password and anonymous auth
+- **`:features:profile`** — User profile with theme and language preferences, sign-out
 - Composable screens observe `StateFlow<UiState>` via `collectAsStateWithLifecycle()`
 - ViewModels hold `MutableStateFlow<UiState>` (private) and expose `StateFlow<UiState>` (public)
-- One-shot side effects are emitted via `Channel<UiEffect>` and consumed in `LaunchedEffect`
+- One-shot navigation effects use state-driven signals (`UiState.Success`, `isSignedOut` field) instead of `Channel<UiEffect>`
 - No direct dependency on `:core:data`, `:core:network`, or `:core:database`
 
 ### Domain — `:core:domain`
@@ -110,18 +129,38 @@ graph TD
 - `ArticleEntity` (Room entity) + `RemoteKeysEntity` + `ArticleFts` (FTS4 virtual)
 - `ArticleEntityMapper` (entity → domain model)
 
+### Benchmark — `:macrobenchmark`
+
+- Test-only module using `com.android.test` + `androidx.baselineprofile` plugins
+- `StartupBenchmark` — measures cold startup and list scroll frame timing
+- `BaselineProfileGenerator` — generates `baseline-prof.txt` for AOT compilation at install time
+- Runs on connected devices via `./gradlew :app:generateReleaseBaselineProfile`
+- Not included in CI; requires physical device
+
 ---
 
 ## Package Structure
 
 ```
+:features:auth/
+└── com.mauromarod.spaceflightnews.auth/
+    ├── LoginScreen.kt
+    ├── LoginViewModel.kt
+    └── LoginUiState.kt
+
+:features:profile/
+└── com.mauromarod.spaceflightnews.profile/
+    ├── ProfileScreen.kt
+    ├── ProfileViewModel.kt
+    └── ProfileUiState.kt
+
 :features:news/
 └── com.mauromarod.spaceflightnews.features.news/
     ├── NewsScreen.kt
     ├── NewsViewModel.kt
-    ├── NewsUiState.kt
     ├── NewsUiEvent.kt
-    └── NewsUiEffect.kt
+    └── util/
+        └── NewsFormatter.kt
 
 :features:detail/
 └── com.mauromarod.spaceflightnews.features.detail/
@@ -130,6 +169,11 @@ graph TD
     ├── DetailUiState.kt
     ├── DetailUiEvent.kt
     └── DetailUiEffect.kt
+
+:macrobenchmark/
+└── com.mauromarod.spaceflightnews.macrobenchmark/
+    ├── StartupBenchmark.kt
+    └── BaselineProfileGenerator.kt
 
 :core:domain/
 └── com.mauromarod.spaceflightnews.core.domain/
@@ -146,11 +190,16 @@ graph TD
 └── com.mauromarod.spaceflightnews.core.data/
     ├── repository/
     │   └── ArticleRepositoryImpl.kt
+    ├── paging/
+    │   ├── ArticlePagingProvider.kt
+    │   └── ArticlePagingProviderImpl.kt
     ├── mediator/
     │   ├── ArticleRemoteMediator.kt
     │   └── SearchRemoteMediator.kt
-    └── mapper/
-        └── ArticleMapper.kt
+    ├── mapper/
+    │   └── ArticleMapper.kt
+    └── util/
+        └── FtsQuery.kt
 
 :core:network/
 └── com.mauromarod.spaceflightnews.core.network/
@@ -165,8 +214,6 @@ graph TD
 :core:database/
 └── com.mauromarod.spaceflightnews.core.database/
     ├── AppDatabase.kt
-    ├── converter/
-    │   └── Converters.kt
     ├── dao/
     │   ├── ArticleDao.kt
     │   └── RemoteKeysDao.kt

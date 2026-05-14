@@ -2,7 +2,7 @@
 
 ## Overview
 
-The app uses **Room 2.x** on top of SQLite. The database is named `spaceflight_news.db` and is currently at **version 2**.
+The app uses **Room 2.x** on top of SQLite. The database is named `spaceflight_news.db` and is currently at **version 3**. WAL (Write-Ahead Logging) is enabled for faster concurrent reads.
 
 There are **3 tables**:
 
@@ -33,6 +33,8 @@ Defined by `ArticleEntity`. This is the main data table — all UI reads come fr
 
 **Ordering:** All paginated queries sort by `publishedAt DESC`.
 
+**Indices:** `CREATE INDEX IF NOT EXISTS index_articles_publishedAt ON articles(publishedAt)` — avoids full table scan for the `ORDER BY publishedAt DESC` used in every list query.
+
 ---
 
 ## Table: `remote_keys`
@@ -45,6 +47,8 @@ Defined by `RemoteKeysEntity`. Paging 3's `RemoteMediator` uses this table to tr
 | `prevKey` | INTEGER | Yes | API offset for the previous page; null for the first page |
 | `nextKey` | INTEGER | Yes | API offset for the next page; null when end of pagination is reached |
 | `lastFetchedAt` | INTEGER | Yes | Epoch millis of the last successful REFRESH; used to display the offline banner timestamp |
+
+**Indices:** `CREATE INDEX IF NOT EXISTS index_remote_keys_lastFetchedAt ON remote_keys(lastFetchedAt)` — speeds up `SELECT MAX(lastFetchedAt)` queries called by `isDataStale()`.
 
 **Written by:** `ArticleRemoteMediator` on each successful REFRESH or APPEND.  
 **Read by:** `ArticleRepositoryImpl.getLastSyncedAt()` → surfaced in `NewsViewModel._lastSyncedAt` → shown in the offline Snackbar.
@@ -86,16 +90,14 @@ FTS4 supports the `*` wildcard at the end of a token to match all words that sta
 "space* x*" → matches rows with any token starting with "space" AND any token starting with "x"
 ```
 
-**Applied in code:** `ArticleRepositoryImpl.buildFtsQuery()` (extracted to `internal companion object` for testability) transforms the user query before passing it to the DAO:
+**Applied in code:** `buildFtsQuery()` (in `core/data/util/FtsQuery.kt`) transforms the user query before passing it to the DAO:
 
 ```kotlin
-internal companion object {
-    fun buildFtsQuery(query: String): String =
-        query.trim().split("\\s+".toRegex())
-            .filter { it.isNotEmpty() }
-            .joinToString(" ") { "$it*" }
-            .ifEmpty { query }
-}
+internal fun buildFtsQuery(query: String): String =
+    query.trim().split("\\s+".toRegex())
+        .filter { it.isNotEmpty() }
+        .joinToString(" ") { "$it*" }
+        .ifEmpty { query }
 ```
 
 The original (untransformed) query is sent to the network API via `SearchRemoteMediator` so the remote search remains exact.
@@ -151,11 +153,18 @@ The original (untransformed) query is sent to the network API via `SearchRemoteM
 | Version | Change | Strategy |
 |---|---|---|
 | 1 → 2 | Added `articles_fts` virtual table | Explicit `Migration(1, 2)` — only creates the FTS table, preserves existing article data |
+| 2 → 3 | Added indices for performance | Explicit `Migration(2, 3)` — creates two indices, preserves existing data |
 
-Migration SQL executed:
+Migration 1-2 SQL:
 ```sql
 CREATE VIRTUAL TABLE IF NOT EXISTS `articles_fts`
 USING fts4(content=`articles`, `title`, `summary`)
+```
+
+Migration 2-3 SQL:
+```sql
+CREATE INDEX IF NOT EXISTS `index_articles_publishedAt` ON `articles` (`publishedAt`);
+CREATE INDEX IF NOT EXISTS `index_remote_keys_lastFetchedAt` ON `remote_keys` (`lastFetchedAt`);
 ```
 
 The `content=articles` directive tells FTS4 to use `articles` as the content table, which avoids duplicating the text data on disk. SQLite creates insert/update/delete triggers on `articles` to keep the FTS index current.
