@@ -47,7 +47,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.uicomponents.ArticleCard
@@ -147,7 +146,7 @@ private fun NewsHeader(
             Text(
                 text = "SPACE FLIGHT\nNEWS",
                 style = MaterialTheme.typography.displayMedium,
-                color = VergeJellyMint,
+                        color = MaterialTheme.colorScheme.primary,
             )
             IconButton(onClick = onNavigateToProfile) {
                 Icon(
@@ -307,7 +306,7 @@ private fun ArticleList(
                 ) {
                     CircularProgressIndicator(
                         modifier = Modifier.padding(MaterialTheme.spacing.medium),
-                        color = VergeJellyMint,
+                color = MaterialTheme.colorScheme.primary,
                         strokeWidth = 2.dp,
                     )
                 }

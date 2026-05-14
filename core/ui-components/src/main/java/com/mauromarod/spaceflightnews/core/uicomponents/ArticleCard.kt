@@ -19,10 +19,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mauromarod.spaceflightnews.core.designsystem.SpaceFlightNewsTheme
-import com.mauromarod.spaceflightnews.core.designsystem.VergeCanvas
-import com.mauromarod.spaceflightnews.core.designsystem.VergeHazardWhite
-import com.mauromarod.spaceflightnews.core.designsystem.VergeJellyMint
-import com.mauromarod.spaceflightnews.core.designsystem.VergeSecondaryText
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 
 @Composable
@@ -41,9 +37,9 @@ fun ArticleCard(
             .clickable(onClick = onClick)
             .testTag(ArticleCardTags.CARD),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = VergeCanvas),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        border = BorderStroke(width = 1.dp, color = VergeHazardWhite),
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant),
     ) {
         Column {
             Box(
@@ -80,7 +76,7 @@ private fun ArticleCardPreview() {
                 Text(
                     text = "NASA reveals new findings from James Webb Space Telescope",
                     style = MaterialTheme.typography.headlineMedium,
-                    color = VergeHazardWhite,
+                    color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 3,
                     modifier = Modifier.padding(bottom = MaterialTheme.spacing.xSmall),
                 )
@@ -89,14 +85,14 @@ private fun ArticleCardPreview() {
                 Text(
                     text = "SPACE.COM · MAY 13",
                     style = MaterialTheme.typography.labelMedium,
-                    color = VergeSecondaryText,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
             badge = {
                 Text(
                     text = "SCIENCE",
                     style = MaterialTheme.typography.labelMedium,
-                    color = VergeJellyMint,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(bottom = MaterialTheme.spacing.xSmall),
                 )
             }

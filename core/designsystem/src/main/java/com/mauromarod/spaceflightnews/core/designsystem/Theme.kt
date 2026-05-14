@@ -30,7 +30,7 @@ private val VergeDarkColorScheme = darkColorScheme(
 )
 
 private val VergeLightColorScheme = lightColorScheme(
-    primary = VergeJellyMint,
+    primary = VergeConsoleMintBorder,
     onPrimary = VergeAbsoluteBlack,
     primaryContainer = VergeLightSurfaceVariant,
     onPrimaryContainer = VergeCanvas,
