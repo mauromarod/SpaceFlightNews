@@ -1,4 +1,4 @@
-appId: {{APP_ID}}
+appId: com.mauromarod.spaceflightnews.debug
 # Requires: tablet with screenWidthDp >= 600 and auto-rotation enabled.
 # Two-pane layout only activates on landscape tablets.
 ---

@@ -1,4 +1,4 @@
-appId: {{APP_ID}}
+appId: com.mauromarod.spaceflightnews.debug
 ---
 # Happy path: launch → login as guest → articles load → search → open article → back
 - launchApp:

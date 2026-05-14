@@ -94,35 +94,30 @@ fun LoginScreen(
                 .imePadding()
                 .padding(horizontal = MaterialTheme.spacing.large),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
         ) {
-            LoginHeader()
-
-            Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
+            LoginHeader(
+                modifier = Modifier.padding(bottom = MaterialTheme.spacing.xLarge)
+            )
 
             LoginForm(
                 isLoading = uiState is LoginUiState.Loading,
                 isSignUp = isSignUp,
                 onSignInWithEmail = viewModel::signInWithEmail,
                 onSignUpWithEmail = viewModel::signUpWithEmail,
+                modifier = Modifier.padding(bottom = MaterialTheme.spacing.small),
             )
-
-            Spacer(Modifier.height(MaterialTheme.spacing.small))
 
             LoginModeSwitch(
                 isSignUp = isSignUp,
                 isLoading = uiState is LoginUiState.Loading,
                 onToggle = { isSignUp = !isSignUp },
+                modifier = Modifier.padding(bottom = MaterialTheme.spacing.medium),
             )
-
-            Spacer(Modifier.height(MaterialTheme.spacing.medium))
 
             LoginGuestButton(
                 isLoading = uiState is LoginUiState.Loading,
                 onSignInAnonymously = viewModel::signInAnonymously,
             )
-
-            Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
         }
 
         SnackbarHost(
@@ -139,6 +134,7 @@ private fun LoginForm(
     isSignUp: Boolean,
     onSignInWithEmail: (email: String, password: String) -> Unit,
     onSignUpWithEmail: (email: String, password: String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -164,89 +160,92 @@ private fun LoginForm(
 
     val fieldShape = androidx.compose.foundation.shape.RoundedCornerShape(2.dp)
 
-    OutlinedTextField(
-        value = email,
-        onValueChange = { email = it },
-        label = { Text(stringResource(R.string.login_email_label)) },
-        singleLine = true,
-        shape = fieldShape,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next,
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = { focusManager.moveFocus(FocusDirection.Down) }
-        ),
-        colors = fieldColors,
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(LoginTags.EMAIL_FIELD),
-    )
+    Column(modifier = modifier) {
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text(stringResource(R.string.login_email_label)) },
+            singleLine = true,
+            shape = fieldShape,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next,
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            ),
+            colors = fieldColors,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(LoginTags.EMAIL_FIELD),
+        )
 
-    Spacer(Modifier.height(MaterialTheme.spacing.small))
+        Spacer(Modifier.height(MaterialTheme.spacing.small))
 
-    OutlinedTextField(
-        value = password,
-        onValueChange = { password = it },
-        label = { Text(stringResource(R.string.login_password_label)) },
-        singleLine = true,
-        shape = fieldShape,
-        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done,
-        ),
-        keyboardActions = KeyboardActions(onDone = { onSubmit() }),
-        trailingIcon = {
-            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                Icon(
-                    imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
-                    contentDescription = stringResource(
-                        if (passwordVisible) R.string.login_password_hide else R.string.login_password_show
-                    ),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text(stringResource(R.string.login_password_label)) },
+            singleLine = true,
+            shape = fieldShape,
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
+                        contentDescription = stringResource(
+                            if (passwordVisible) R.string.login_password_hide else R.string.login_password_show
+                        ),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+            colors = fieldColors,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(LoginTags.PASSWORD_FIELD),
+        )
+
+        Spacer(Modifier.height(MaterialTheme.spacing.medium))
+
+        Button(
+            onClick = { onSubmit() },
+            enabled = !isLoading,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag(if (isSignUp) LoginTags.SIGNUP_SUBMIT_BUTTON else LoginTags.LOGIN_SUBMIT_BUTTON),
+            shape = MaterialTheme.shapes.large,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+            ),
+        ) {
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(18.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            } else {
+                Text(
+                    text = stringResource(if (isSignUp) R.string.login_create_account else R.string.login_sign_in).uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
-        },
-        colors = fieldColors,
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(LoginTags.PASSWORD_FIELD),
-    )
-
-    Spacer(Modifier.height(MaterialTheme.spacing.medium))
-
-    Button(
-        onClick = { onSubmit() },
-        enabled = !isLoading,
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(if (isSignUp) LoginTags.SIGNUP_SUBMIT_BUTTON else LoginTags.LOGIN_SUBMIT_BUTTON),
-        shape = MaterialTheme.shapes.large,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-        ),
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(18.dp),
-                strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
-        } else {
-            Text(
-                text = stringResource(if (isSignUp) R.string.login_create_account else R.string.login_sign_in).uppercase(),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimary,
-            )
         }
     }
 }
 
 @Composable
-private fun LoginHeader() {
-    Text(
+private fun LoginHeader(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        Text(
         text = stringResource(R.string.app_name).uppercase(),
         style = MaterialTheme.typography.displayLarge,
         color = MaterialTheme.colorScheme.primary,
@@ -260,6 +259,7 @@ private fun LoginHeader() {
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(top = MaterialTheme.spacing.xSmall),
     )
+    }
 }
 
 @Composable
@@ -267,11 +267,12 @@ private fun LoginModeSwitch(
     isSignUp: Boolean,
     isLoading: Boolean,
     onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     TextButton(
         onClick = onToggle,
         enabled = !isLoading,
-        modifier = Modifier.testTag(LoginTags.LOGIN_SIGNUP_BUTTON),
+        modifier = modifier.testTag(LoginTags.LOGIN_SIGNUP_BUTTON),
     ) {
         Text(
             text = stringResource(
@@ -287,11 +288,12 @@ private fun LoginModeSwitch(
 private fun LoginGuestButton(
     isLoading: Boolean,
     onSignInAnonymously: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     OutlinedButton(
         onClick = onSignInAnonymously,
         enabled = !isLoading,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .testTag(LoginTags.GUEST_BUTTON),
         shape = MaterialTheme.shapes.extraLarge,
