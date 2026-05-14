@@ -13,7 +13,7 @@ interface ArticleApi {
     suspend fun getArticles(
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
-        @Query("ordering") ordering: String = "-published_at"
+        @Query("ordering") ordering: String = DEFAULT_ORDERING,
     ): NetworkResult<ArticleListResponseDto>
 
     @GET("articles/")
@@ -21,11 +21,15 @@ interface ArticleApi {
         @Query("search") query: String,
         @Query("limit") limit: Int,
         @Query("offset") offset: Int,
-        @Query("ordering") ordering: String = "-published_at"
+        @Query("ordering") ordering: String = DEFAULT_ORDERING,
     ): NetworkResult<ArticleListResponseDto>
 
     @GET("articles/{id}/")
     suspend fun getArticle(
         @Path("id") id: Int
     ): NetworkResult<ArticleDto>
+
+    companion object {
+        private const val DEFAULT_ORDERING = "-published_at"
+    }
 }

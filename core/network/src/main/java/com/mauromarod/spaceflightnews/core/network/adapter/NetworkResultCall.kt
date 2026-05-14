@@ -6,6 +6,9 @@ import okio.Timeout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.atomic.AtomicReference
 
 internal class NetworkResultCall<T>(
     private val delegate: Call<T>
@@ -28,7 +31,7 @@ internal class NetworkResultCall<T>(
             }
 
             override fun onFailure(call: Call<T>, t: Throwable) {
-                val networkResult = if (t is java.io.IOException) {
+                val networkResult = if (t is IOException) {
                     NetworkResult.NetworkError(t)
                 } else {
                     NetworkResult.UnknownError(t)
@@ -38,8 +41,22 @@ internal class NetworkResultCall<T>(
         })
     }
 
-    override fun execute(): Response<NetworkResult<T>> =
-        throw UnsupportedOperationException("NetworkResultCall does not support sync execution")
+    override fun execute(): Response<NetworkResult<T>> {
+        val latch = CountDownLatch(1)
+        val result = AtomicReference<Response<NetworkResult<T>>>()
+        enqueue(object : Callback<NetworkResult<T>> {
+            override fun onResponse(call: Call<NetworkResult<T>>, response: Response<NetworkResult<T>>) {
+                result.set(response)
+                latch.countDown()
+            }
+            override fun onFailure(call: Call<NetworkResult<T>>, t: Throwable) {
+                result.set(Response.success(NetworkResult.NetworkError(t)))
+                latch.countDown()
+            }
+        })
+        latch.await()
+        return result.get()
+    }
     override fun clone(): Call<NetworkResult<T>> = NetworkResultCall(delegate.clone())
     override fun request(): Request = delegate.request()
     override fun timeout(): Timeout = delegate.timeout()

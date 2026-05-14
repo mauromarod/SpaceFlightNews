@@ -282,7 +282,7 @@ class ArticleRemoteMediatorTest {
     private fun fakeDto(id: Int) = ArticleDto(
         id = id, title = "Article $id", url = "https://example.com/$id",
         imageUrl = null, newsSite = "Space.com", summary = "Summary",
-        publishedAt = "2024-01-15T12:00:00Z", updatedAt = "2024-01-15T12:00:00Z",
+        publishedAt = "2024-01-15T12:00:00Z",
         featured = false, launches = emptyList(), events = emptyList()
     )
 }

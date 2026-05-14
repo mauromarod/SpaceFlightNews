@@ -23,7 +23,7 @@ class ArticleMapperTest {
     ) = ArticleDto(
         id = id, title = title, url = url, imageUrl = imageUrl,
         newsSite = newsSite, summary = summary, publishedAt = publishedAt,
-        updatedAt = updatedAt, featured = featured,
+        featured = featured,
         launches = emptyList<LaunchRefDto>(), events = emptyList<EventRefDto>()
     )
 

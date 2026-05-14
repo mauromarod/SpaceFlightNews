@@ -12,7 +12,6 @@ data class ArticleDto(
     @Json(name = "news_site") val newsSite: String,
     @Json(name = "summary") val summary: String,
     @Json(name = "published_at") val publishedAt: String,
-    @Json(name = "updated_at") val updatedAt: String,
     @Json(name = "featured") val featured: Boolean,
     @Json(name = "launches") val launches: List<LaunchRefDto>,
     @Json(name = "events") val events: List<EventRefDto>
