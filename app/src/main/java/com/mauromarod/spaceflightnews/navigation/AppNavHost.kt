@@ -47,7 +47,9 @@ import com.mauromarod.spaceflightnews.features.detail.DetailScreen
 import com.mauromarod.spaceflightnews.features.news.NewsScreen
 import com.mauromarod.spaceflightnews.features.news.NewsViewModel
 import com.mauromarod.spaceflightnews.auth.LoginScreen
+import com.mauromarod.spaceflightnews.auth.LoginViewModel
 import com.mauromarod.spaceflightnews.profile.ProfileScreen
+import com.mauromarod.spaceflightnews.profile.ProfileViewModel
 
 @Composable
 fun AppNavHost(
@@ -110,12 +112,14 @@ private fun SinglePaneLayout(
         modifier = modifier.semantics { testTagsAsResourceId = true }
     ) {
         composable(Screen.Login.route) {
+            val loginViewModel: LoginViewModel = hiltViewModel()
             LoginScreen(
                 onNavigateToNews = {
                     navController.navigate(Screen.NewsList.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
-                }
+                },
+                viewModel = loginViewModel,
             )
         }
 
@@ -133,6 +137,7 @@ private fun SinglePaneLayout(
         }
 
         composable(Screen.Profile.route) {
+            val profileViewModel: ProfileViewModel = hiltViewModel()
             ProfileScreen(
                 onBack = { navController.popBackStack() },
                 onSignOut = {
@@ -140,7 +145,8 @@ private fun SinglePaneLayout(
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
-                }
+                },
+                viewModel = profileViewModel,
             )
         }
 
@@ -184,12 +190,14 @@ private fun TwoPaneLayout(
         modifier = modifier.semantics { testTagsAsResourceId = true },
     ) {
         composable(Screen.Login.route) {
+            val loginViewModel: LoginViewModel = hiltViewModel()
             LoginScreen(
                 onNavigateToNews = {
                     mainNavController.navigate(Screen.NewsList.route) {
                         popUpTo(Screen.Login.route) { inclusive = true }
                     }
-                }
+                },
+                viewModel = loginViewModel,
             )
         }
 
@@ -205,6 +213,7 @@ private fun TwoPaneLayout(
         }
 
         composable(Screen.Profile.route) {
+            val profileViewModel: ProfileViewModel = hiltViewModel()
             ProfileScreen(
                 onBack = { mainNavController.popBackStack() },
                 onSignOut = {
@@ -212,7 +221,8 @@ private fun TwoPaneLayout(
                     mainNavController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
                     }
-                }
+                },
+                viewModel = profileViewModel,
             )
         }
     }
