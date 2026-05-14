@@ -116,6 +116,8 @@ dependencies {
     // Feature modules
     implementation(project(":features:auth"))
     implementation(project(":features:profile"))
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     implementation(project(":features:news"))
     implementation(project(":features:detail"))
 

@@ -1,6 +1,5 @@
 package com.mauromarod.spaceflightnews
 
-import android.annotation.SuppressLint
 import android.app.Application
 import android.os.Build
 import android.os.StrictMode

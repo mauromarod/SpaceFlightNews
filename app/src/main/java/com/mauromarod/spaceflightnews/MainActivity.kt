@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
@@ -57,6 +58,10 @@ class MainActivity : ComponentActivity() {
                 ThemePreference.DARK -> true
                 ThemePreference.LIGHT -> false
                 ThemePreference.SYSTEM -> systemDark
+            }
+
+            LaunchedEffect(Unit) {
+                reportFullyDrawn()
             }
 
             SpaceFlightNewsTheme(darkTheme = isDarkTheme) {

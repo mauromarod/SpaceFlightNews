@@ -3,8 +3,6 @@ package com.mauromarod.spaceflightnews.features.detail
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -47,8 +45,6 @@ import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.Article
 import com.mauromarod.spaceflightnews.core.uicomponents.ErrorState
 import com.mauromarod.spaceflightnews.core.uicomponents.ShimmerBox
-import com.mauromarod.spaceflightnews.core.uicomponents.LocalAnimatedVisibilityScope
-import com.mauromarod.spaceflightnews.core.uicomponents.LocalSharedTransitionScope
 import com.mauromarod.spaceflightnews.core.uicomponents.NetworkImage
 import com.mauromarod.spaceflightnews.features.detail.R
 import java.time.ZoneId
@@ -200,16 +196,13 @@ private fun ArticleDetail(
     onOpenUrl: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val sharedTransitionScope = LocalSharedTransitionScope.current
-    val animatedVisibilityScope = LocalAnimatedVisibilityScope.current
-
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .testTag(DetailTags.CONTENT),
     ) {
-        item { ArticleDetailImage(article, sharedTransitionScope, animatedVisibilityScope) }
+        item { ArticleDetailImage(article) }
         item { ArticleDetailMeta(article) }
         item { ArticleDetailTitle(article) }
         item { ArticleDetailSummary(article) }
@@ -218,37 +211,15 @@ private fun ArticleDetail(
 }
 
 @Composable
-private fun ArticleDetailImage(
-    article: Article,
-    sharedTransitionScope: SharedTransitionScope?,
-    animatedVisibilityScope: AnimatedVisibilityScope?,
-) {
+private fun ArticleDetailImage(article: Article) {
     NetworkImage(
         url = article.imageUrl,
         contentDescription = article.title,
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(16f / 9f)
-            .then(imageModifier(article, sharedTransitionScope, animatedVisibilityScope)),
+            .aspectRatio(16f / 9f),
     )
-}
-
-@Composable
-private fun imageModifier(
-    article: Article,
-    sharedTransitionScope: SharedTransitionScope?,
-    animatedVisibilityScope: AnimatedVisibilityScope?,
-): Modifier {
-    if (sharedTransitionScope != null && animatedVisibilityScope != null) {
-        with(sharedTransitionScope) {
-            return Modifier.sharedElement(
-                rememberSharedContentState(key = "image-${article.id}"),
-                animatedVisibilityScope = animatedVisibilityScope,
-            )
-        }
-    }
-    return Modifier
 }
 
 @Composable

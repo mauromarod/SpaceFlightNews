@@ -1,7 +1,9 @@
 package com.mauromarod.spaceflightnews.navigation
 
 import android.content.res.Configuration
-import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,8 +43,6 @@ import com.mauromarod.spaceflightnews.features.detail.DetailViewModel
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.repository.AuthRepository
 import com.mauromarod.spaceflightnews.core.uicomponents.R as UiR
-import com.mauromarod.spaceflightnews.core.uicomponents.LocalAnimatedVisibilityScope
-import com.mauromarod.spaceflightnews.core.uicomponents.LocalSharedTransitionScope
 import com.mauromarod.spaceflightnews.features.detail.DetailScreen
 import com.mauromarod.spaceflightnews.features.news.NewsScreen
 import com.mauromarod.spaceflightnews.features.news.NewsViewModel
@@ -105,73 +104,66 @@ private fun SinglePaneLayout(
         }
     }
 
-    SharedTransitionLayout {
-        CompositionLocalProvider(LocalSharedTransitionScope provides this) {
-            NavHost(
-                navController = navController,
-                startDestination = startDestination,
-                modifier = modifier.semantics { testTagsAsResourceId = true }
-            ) {
-                composable(Screen.Login.route) {
-                    LoginScreen(
-                        onNavigateToNews = {
-                            navController.navigate(Screen.NewsList.route) {
-                                popUpTo(Screen.Login.route) { inclusive = true }
-                            }
-                        }
-                    )
-                }
-
-                composable(Screen.NewsList.route) {
-                    val newsViewModel: NewsViewModel = hiltViewModel()
-                    CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
-                        NewsScreen(
-                            onNavigateToDetail = { articleId ->
-                                onArticleOpened(articleId)
-                                navController.navigate(Screen.ArticleDetail.createRoute(articleId))
-                            },
-                            onNavigateToProfile = {
-                                navController.navigate(Screen.Profile.route)
-                            },
-                            viewModel = newsViewModel,
-                        )
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = modifier.semantics { testTagsAsResourceId = true }
+    ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onNavigateToNews = {
+                    navController.navigate(Screen.NewsList.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
                     }
                 }
+            )
+        }
 
-                composable(Screen.Profile.route) {
-                    ProfileScreen(
-                        onBack = { navController.popBackStack() },
-                        onSignOut = {
-                            onArticleClosed()
-                            navController.navigate(Screen.Login.route) {
-                                popUpTo(0) { inclusive = true }
-                            }
-                        }
-                    )
-                }
+        composable(Screen.NewsList.route) {
+            val newsViewModel: NewsViewModel = hiltViewModel()
+            NewsScreen(
+                onNavigateToDetail = { articleId ->
+                    onArticleOpened(articleId)
+                },
+                onNavigateToProfile = {
+                    navController.navigate(Screen.Profile.route)
+                },
+                viewModel = newsViewModel,
+            )
+        }
 
-                composable(
-                    route = Screen.ArticleDetail.route,
-                    arguments = listOf(
-                        navArgument(Screen.ArticleDetail.ARG_ARTICLE_ID) { type = NavType.IntType }
-                    )
-                ) {
-                    val detailViewModel: DetailViewModel = hiltViewModel()
-                    BackHandler {
-                        onArticleClosed()
-                        navController.popBackStack()
-                    }
-                    CompositionLocalProvider(LocalAnimatedVisibilityScope provides this) {
-                        DetailScreen(
-                            onBack = {
-                                onArticleClosed()
-                                navController.popBackStack()
-                            },
-                            viewModel = detailViewModel,
-                        )
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onBack = { navController.popBackStack() },
+                onSignOut = {
+                    onArticleClosed()
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 }
+            )
+        }
+
+        composable(
+            route = Screen.ArticleDetail.route,
+            arguments = listOf(
+                navArgument(Screen.ArticleDetail.ARG_ARTICLE_ID) { type = NavType.IntType }
+            ),
+            enterTransition = { fadeIn(tween(300)) },
+            exitTransition = { fadeOut(tween(300)) },
+        ) {
+            val detailViewModel: DetailViewModel = hiltViewModel()
+            BackHandler {
+                onArticleClosed()
+                navController.popBackStack()
             }
+            DetailScreen(
+                onBack = {
+                    onArticleClosed()
+                    navController.popBackStack()
+                },
+                viewModel = detailViewModel,
+            )
         }
     }
 }
