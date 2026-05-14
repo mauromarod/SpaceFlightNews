@@ -27,6 +27,7 @@ rootProject.name = "Space Flight News"
 include(":app")
 
 // Features
+include(":macrobenchmark")
 include(":features:auth")
 include(":features:profile")
 include(":features:news")

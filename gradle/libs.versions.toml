@@ -42,6 +42,8 @@ appcompat = "1.7.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
+benchmark = "1.5.0-alpha06"
+baselineprofile = "1.5.0-alpha06"
 androidxTestRunner = "1.6.2"
 turbine = "1.2.0"
 mockk = "1.13.17"
@@ -130,6 +132,8 @@ roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "robora
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 archunit = { group = "com.tngtech.archunit", name = "archunit-junit4", version.ref = "archunit" }
 leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
+androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-benchmark-macro-core = { group = "androidx.benchmark", name = "benchmark-macro", version.ref = "benchmark" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -142,3 +146,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+androidx-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }

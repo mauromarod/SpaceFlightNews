@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.baselineprofile)
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
 }
@@ -112,6 +113,9 @@ composeCompiler {
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.profileinstaller)
+
+    // Baseline Profile generation
+    baselineProfile(project(":macrobenchmark"))
 
     // Feature modules
     implementation(project(":features:auth"))
