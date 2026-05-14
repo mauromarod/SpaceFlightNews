@@ -36,7 +36,17 @@ jobs:
         run: ./gradlew ktlintCheck --no-daemon
 
       - name: Detekt
-        run: ./gradlew detekt --no-daemon
+        run: |
+          for mod in \
+            core:domain core:database core:data core:network \
+            core:designsystem core:ui-components \
+            features:auth features:profile features:news features:detail \
+            app; do
+            ./gradulesq ":$mod:detekt" --no-daemon || exit 1
+          done
+
+      - name: Lint
+        run: ./gradlew lintDebug --no-daemon
 
   unit-tests:
     name: Unit Tests
@@ -156,7 +166,6 @@ jobs:
   build-release:
     name: Build Release AAB
     runs-on: ubuntu-latest
-    # Only run on pushes to main (not on PRs) to avoid signing overhead on every PR
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [unit-tests, instrumented-tests]
     steps:
