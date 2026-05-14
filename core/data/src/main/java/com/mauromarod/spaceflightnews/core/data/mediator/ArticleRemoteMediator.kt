@@ -5,7 +5,9 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
+import android.content.Context
 import com.mauromarod.spaceflightnews.core.data.mapper.toEntity
+import com.mauromarod.spaceflightnews.core.data.util.isNetworkAvailable
 import com.mauromarod.spaceflightnews.core.database.AppDatabase
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
 import com.mauromarod.spaceflightnews.core.database.dao.RemoteKeysDao
@@ -17,7 +19,9 @@ import com.mauromarod.spaceflightnews.core.network.NetworkResult
 import com.mauromarod.spaceflightnews.core.network.api.ArticleApi
 
 @OptIn(ExperimentalPagingApi::class)
+@Suppress("LongParameterList")
 internal class ArticleRemoteMediator(
+    private val context: Context,
     private val api: ArticleApi,
     private val database: AppDatabase,
     private val articleDao: ArticleDao,
@@ -27,16 +31,19 @@ internal class ArticleRemoteMediator(
     private val analyticsRepository: AnalyticsRepository? = null,
 ) : RemoteMediator<Int, ArticleEntity>() {
 
+    @Suppress("CyclomaticComplexMethod", "ReturnCount")
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, ArticleEntity>
     ): MediatorResult {
+        if (!context.isNetworkAvailable()) {
+            return MediatorResult.Success(endOfPaginationReached = false)
+        }
+
         val offset = when (loadType) {
             LoadType.REFRESH -> 0
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
             LoadType.APPEND -> {
-                // null lastItem or missing remoteKey means REFRESH hasn't populated the DB yet —
-                // not that we've reached the end. endOfPaginationReached=false lets Paging retry.
                 val lastItem = state.lastItemOrNull()
                     ?: return MediatorResult.Success(endOfPaginationReached = false)
                 val remoteKey = remoteKeysDao.getByArticleId(lastItem.id)

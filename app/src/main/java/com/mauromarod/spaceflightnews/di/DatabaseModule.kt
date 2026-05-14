@@ -2,6 +2,7 @@ package com.mauromarod.spaceflightnews.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mauromarod.spaceflightnews.core.database.AppDatabase
@@ -37,6 +38,7 @@ object DatabaseModule {
     @Singleton
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "spaceflight_news.db")
+            .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
             .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
 

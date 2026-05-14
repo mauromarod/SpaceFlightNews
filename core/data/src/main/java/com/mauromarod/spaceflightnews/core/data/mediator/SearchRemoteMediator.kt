@@ -4,7 +4,9 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import android.content.Context
 import com.mauromarod.spaceflightnews.core.data.mapper.toEntity
+import com.mauromarod.spaceflightnews.core.data.util.isNetworkAvailable
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
 import com.mauromarod.spaceflightnews.core.database.entity.ArticleEntity
 import com.mauromarod.spaceflightnews.core.network.NetworkResult
@@ -12,10 +14,11 @@ import com.mauromarod.spaceflightnews.core.network.api.ArticleApi
 
 @OptIn(ExperimentalPagingApi::class)
 internal class SearchRemoteMediator(
+    private val context: Context,
     private val query: String,
     private val api: ArticleApi,
     private val articleDao: ArticleDao,
-    private val pageSize: Int = ArticleRemoteMediator.PAGE_SIZE
+    private val pageSize: Int = ArticleRemoteMediator.PAGE_SIZE,
 ) : RemoteMediator<Int, ArticleEntity>() {
 
     private var nextOffset = 0
@@ -24,6 +27,10 @@ internal class SearchRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, ArticleEntity>
     ): MediatorResult {
+        if (!context.isNetworkAvailable()) {
+            return MediatorResult.Success(endOfPaginationReached = false)
+        }
+
         val offset = when (loadType) {
             LoadType.REFRESH -> {
                 nextOffset = 0

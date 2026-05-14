@@ -6,6 +6,7 @@ import com.mauromarod.spaceflightnews.core.data.repository.ArticleRepositoryImpl
 import com.mauromarod.spaceflightnews.core.database.AppDatabase
 import com.mauromarod.spaceflightnews.core.database.dao.ArticleDao
 import com.mauromarod.spaceflightnews.core.database.dao.RemoteKeysDao
+import android.content.Context
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.PerformanceTracer
@@ -13,6 +14,7 @@ import com.mauromarod.spaceflightnews.core.network.api.ArticleApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -35,6 +37,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     fun provideArticlePagingProvider(
+        @ApplicationContext context: Context,
         api: ArticleApi,
         database: AppDatabase,
         articleDao: ArticleDao,
@@ -42,6 +45,7 @@ object RepositoryModule {
         performanceTracer: PerformanceTracer,
         analyticsRepository: AnalyticsRepository,
     ): ArticlePagingProvider = ArticlePagingProviderImpl(
+        context = context,
         api = api,
         database = database,
         articleDao = articleDao,

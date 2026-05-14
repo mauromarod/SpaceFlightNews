@@ -1,5 +1,8 @@
 package com.mauromarod.spaceflightnews.core.data.mediator
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingConfig
@@ -18,6 +21,7 @@ import com.mauromarod.spaceflightnews.core.network.dto.ArticleDto
 import com.mauromarod.spaceflightnews.core.network.dto.ArticleListResponseDto
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -38,6 +42,7 @@ import java.io.IOException
 @OptIn(ExperimentalPagingApi::class)
 class ArticleRemoteMediatorTest {
 
+    private val context: Context = mockk(relaxed = true)
     private val api: ArticleApi = mockk()
     private val database: AppDatabase = mockk(relaxed = true)
     private val articleDao: ArticleDao = mockk(relaxed = true)
@@ -49,9 +54,16 @@ class ArticleRemoteMediatorTest {
     @Before
     fun setUp() {
         mockkStatic("androidx.room.RoomDatabaseKt")
-        // withTransaction<Unit> to help the compiler resolve the generic R = Unit
         coEvery { database.withTransaction<Unit>(any()) } just runs
-        mediator = ArticleRemoteMediator(api, database, articleDao, remoteKeysDao)
+
+        val connectivityManager = mockk<ConnectivityManager>(relaxed = true)
+        val capabilities = mockk<NetworkCapabilities>(relaxed = true)
+        every { context.getSystemService(Context.CONNECTIVITY_SERVICE) } returns connectivityManager
+        every { connectivityManager.activeNetwork } returns mockk(relaxed = true)
+        every { connectivityManager.getNetworkCapabilities(any()) } returns capabilities
+        every { capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
+
+        mediator = ArticleRemoteMediator(context, api, database, articleDao, remoteKeysDao)
     }
 
     @After

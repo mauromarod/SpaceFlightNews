@@ -1,5 +1,8 @@
 package com.mauromarod.spaceflightnews.core.data.mediator
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingConfig
@@ -14,6 +17,7 @@ import com.mauromarod.spaceflightnews.core.network.dto.ArticleDto
 import com.mauromarod.spaceflightnews.core.network.dto.ArticleListResponseDto
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -26,6 +30,7 @@ import java.io.IOException
 @OptIn(ExperimentalPagingApi::class)
 class SearchRemoteMediatorTest {
 
+    private val context: Context = mockk(relaxed = true)
     private val api: ArticleApi = mockk()
     private val articleDao: ArticleDao = mockk(relaxed = true)
     private val pagingConfig = PagingConfig(pageSize = ArticleRemoteMediator.PAGE_SIZE)
@@ -34,7 +39,14 @@ class SearchRemoteMediatorTest {
 
     @Before
     fun setUp() {
-        mediator = SearchRemoteMediator("SpaceX", api, articleDao)
+        val connectivityManager = mockk<ConnectivityManager>(relaxed = true)
+        val capabilities = mockk<NetworkCapabilities>(relaxed = true)
+        every { context.getSystemService(Context.CONNECTIVITY_SERVICE) } returns connectivityManager
+        every { connectivityManager.activeNetwork } returns mockk(relaxed = true)
+        every { connectivityManager.getNetworkCapabilities(any()) } returns capabilities
+        every { capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
+
+        mediator = SearchRemoteMediator(context, "SpaceX", api, articleDao)
     }
 
     // --- PREPEND ---

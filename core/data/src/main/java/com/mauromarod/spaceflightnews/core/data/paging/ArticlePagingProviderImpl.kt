@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import android.content.Context
 import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator
 import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator.Companion.PAGE_SIZE
 import com.mauromarod.spaceflightnews.core.data.mediator.ArticleRemoteMediator.Companion.PREFETCH_DISTANCE
@@ -28,6 +29,7 @@ private val pagingConfig = PagingConfig(
 
 @OptIn(ExperimentalPagingApi::class)
 class ArticlePagingProviderImpl(
+    private val context: Context,
     private val api: ArticleApi,
     private val database: AppDatabase,
     private val articleDao: ArticleDao,
@@ -40,6 +42,7 @@ class ArticlePagingProviderImpl(
         Pager(
             config = pagingConfig,
             remoteMediator = ArticleRemoteMediator(
+                context = context,
                 api = api,
                 database = database,
                 articleDao = articleDao,
@@ -54,7 +57,12 @@ class ArticlePagingProviderImpl(
         val ftsQuery = buildFtsQuery(query)
         return Pager(
             config = pagingConfig,
-            remoteMediator = SearchRemoteMediator(query, api, articleDao),
+            remoteMediator = SearchRemoteMediator(
+                context = context,
+                query = query,
+                api = api,
+                articleDao = articleDao,
+            ),
             pagingSourceFactory = { articleDao.searchPagingSource(ftsQuery) }
         ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
