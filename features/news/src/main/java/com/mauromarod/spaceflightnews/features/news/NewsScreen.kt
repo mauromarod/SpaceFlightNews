@@ -144,9 +144,9 @@ private fun NewsHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "SPACE FLIGHT\nNEWS",
-                style = MaterialTheme.typography.displayMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                text = "SPACE FLIGHT NEWS",
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.primary,
             )
             IconButton(onClick = onNavigateToProfile) {
                 Icon(
