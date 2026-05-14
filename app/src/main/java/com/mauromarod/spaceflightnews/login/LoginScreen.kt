@@ -100,22 +100,7 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
-
-            Text(
-                text = stringResource(R.string.app_name).uppercase(),
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
-            )
-
-            Text(
-                text = stringResource(R.string.login_app_subtitle).uppercase(),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top = MaterialTheme.spacing.xSmall),
-            )
+            LoginHeader()
 
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
 
@@ -128,41 +113,18 @@ fun LoginScreen(
 
             Spacer(Modifier.height(MaterialTheme.spacing.small))
 
-            TextButton(
-                onClick = { isSignUp = !isSignUp },
-                enabled = uiState !is LoginUiState.Loading,
-                modifier = Modifier.testTag(LoginTags.LOGIN_SIGNUP_BUTTON),
-            ) {
-                Text(
-                    text = stringResource(
-                        if (isSignUp) R.string.login_switch_to_signin else R.string.login_switch_to_signup
-                    ).uppercase(),
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
+            LoginModeSwitch(
+                isSignUp = isSignUp,
+                isLoading = uiState is LoginUiState.Loading,
+                onToggle = { isSignUp = !isSignUp },
+            )
 
             Spacer(Modifier.height(MaterialTheme.spacing.medium))
 
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-            Spacer(Modifier.height(MaterialTheme.spacing.medium))
-
-            OutlinedButton(
-                onClick = viewModel::signInAnonymously,
-                enabled = uiState !is LoginUiState.Loading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag(LoginTags.GUEST_BUTTON),
-                shape = MaterialTheme.shapes.extraLarge,
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
-            ) {
-                Text(
-                    text = stringResource(R.string.login_continue_as_guest).uppercase(),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
+            LoginGuestButton(
+                isLoading = uiState is LoginUiState.Loading,
+                onSignInAnonymously = viewModel::signInAnonymously,
+            )
 
             Spacer(Modifier.height(MaterialTheme.spacing.xLarge))
         }
@@ -282,6 +244,67 @@ private fun LoginForm(
                 color = MaterialTheme.colorScheme.onPrimary,
             )
         }
+    }
+}
+
+@Composable
+private fun LoginHeader() {
+    Text(
+        text = stringResource(R.string.app_name).uppercase(),
+        style = MaterialTheme.typography.displayLarge,
+        color = MaterialTheme.colorScheme.primary,
+        textAlign = TextAlign.Center,
+    )
+
+    Text(
+        text = stringResource(R.string.login_app_subtitle).uppercase(),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.padding(top = MaterialTheme.spacing.xSmall),
+    )
+}
+
+@Composable
+private fun LoginModeSwitch(
+    isSignUp: Boolean,
+    isLoading: Boolean,
+    onToggle: () -> Unit,
+) {
+    TextButton(
+        onClick = onToggle,
+        enabled = !isLoading,
+        modifier = Modifier.testTag(LoginTags.LOGIN_SIGNUP_BUTTON),
+    ) {
+        Text(
+            text = stringResource(
+                if (isSignUp) R.string.login_switch_to_signin else R.string.login_switch_to_signup
+            ).uppercase(),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.labelLarge,
+        )
+    }
+}
+
+@Composable
+private fun LoginGuestButton(
+    isLoading: Boolean,
+    onSignInAnonymously: () -> Unit,
+) {
+    OutlinedButton(
+        onClick = onSignInAnonymously,
+        enabled = !isLoading,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(LoginTags.GUEST_BUTTON),
+        shape = MaterialTheme.shapes.extraLarge,
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+    ) {
+        Text(
+            text = stringResource(R.string.login_continue_as_guest).uppercase(),
+            style = MaterialTheme.typography.labelLarge,
+        )
     }
 }
 
