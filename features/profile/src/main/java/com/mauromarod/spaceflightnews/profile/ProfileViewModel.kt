@@ -9,8 +9,6 @@ import com.mauromarod.spaceflightnews.core.domain.repository.RemoteConfigReposit
 import com.mauromarod.spaceflightnews.core.domain.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +16,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,9 +31,6 @@ class ProfileViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
-
-    private val _uiEffect = Channel<ProfileUiEffect>(Channel.BUFFERED)
-    val uiEffect: Flow<ProfileUiEffect> = _uiEffect.receiveAsFlow()
 
     init {
         authRepository.currentUser
@@ -76,7 +70,7 @@ class ProfileViewModel @Inject constructor(
         authRepository.signOut()
         viewModelScope.launch {
             remoteConfigRepository.fetchAndActivate()
-            _uiEffect.send(ProfileUiEffect.NavigateToLogin)
         }
+        _uiState.update { it.copy(isSignedOut = true) }
     }
 }

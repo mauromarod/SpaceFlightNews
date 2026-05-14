@@ -47,7 +47,7 @@ import com.mauromarod.spaceflightnews.core.uicomponents.LocalSharedTransitionSco
 import com.mauromarod.spaceflightnews.features.detail.DetailScreen
 import com.mauromarod.spaceflightnews.features.news.NewsScreen
 import com.mauromarod.spaceflightnews.features.news.NewsViewModel
-import com.mauromarod.spaceflightnews.login.LoginScreen
+import com.mauromarod.spaceflightnews.auth.LoginScreen
 import com.mauromarod.spaceflightnews.profile.ProfileScreen
 
 @Composable

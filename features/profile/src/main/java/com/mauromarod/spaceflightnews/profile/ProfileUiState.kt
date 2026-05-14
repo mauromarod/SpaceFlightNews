@@ -7,8 +7,5 @@ data class ProfileUiState(
     val user: AuthUser? = null,
     val theme: ThemePreference = ThemePreference.SYSTEM,
     val isThemeEnabled: Boolean = false,
+    val isSignedOut: Boolean = false,
 )
-
-sealed interface ProfileUiEffect {
-    data object NavigateToLogin : ProfileUiEffect
-}

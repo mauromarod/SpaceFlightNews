@@ -110,6 +110,8 @@ dependencies {
     implementation(libs.profileinstaller)
 
     // Feature modules
+    implementation(project(":features:auth"))
+    implementation(project(":features:profile"))
     implementation(project(":features:news"))
     implementation(project(":features:detail"))
 

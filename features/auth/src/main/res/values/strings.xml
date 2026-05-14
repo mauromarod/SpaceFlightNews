@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Space Flight News</string>
+    <string name="login_app_subtitle">by mauromarod</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_password_show">Show password</string>
+    <string name="login_password_hide">Hide password</string>
+    <string name="login_sign_in">Sign In</string>
+    <string name="login_create_account">Create Account</string>
+    <string name="login_switch_to_signup">No account? Create one</string>
+    <string name="login_switch_to_signin">Already have an account? Sign in</string>
+    <string name="login_continue_as_guest">Continue as Guest</string>
+    <string name="login_error_fields_required">Email and password are required</string>
+    <string name="login_error_password_too_short">Password must be at least 6 characters</string>
+    <string name="login_error_invalid_credentials">Invalid email or password</string>
+    <string name="login_error_no_internet">No internet connection</string>
+    <string name="login_error_signin_failed">Sign in failed. Please try again.</string>
+    <string name="login_error_email_in_use">An account with this email already exists</string>
+    <string name="login_error_invalid_email">Invalid email address</string>
+    <string name="login_error_signup_failed">Sign up failed. Please try again.</string>
+</resources>

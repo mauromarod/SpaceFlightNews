@@ -1,18 +1,15 @@
-package com.mauromarod.spaceflightnews.login
+package com.mauromarod.spaceflightnews.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mauromarod.spaceflightnews.R
+import com.mauromarod.spaceflightnews.auth.R
 import com.mauromarod.spaceflightnews.core.domain.repository.AnalyticsRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.AuthRepository
 import com.mauromarod.spaceflightnews.core.domain.repository.RemoteConfigRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,9 +23,6 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    private val _uiEffect = Channel<LoginUiEffect>(Channel.BUFFERED)
-    val uiEffect: Flow<LoginUiEffect> = _uiEffect.receiveAsFlow()
-
     fun signInAnonymously() {
         if (_uiState.value is LoginUiState.Loading) return
         viewModelScope.launch {
@@ -37,7 +31,7 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     analyticsRepository.trackLogin("anonymous")
                     remoteConfigRepository.fetchAndActivate()
-                    _uiEffect.send(LoginUiEffect.NavigateToNews)
+                    _uiState.value = LoginUiState.Success
                 }
                 .onFailure { _uiState.value = LoginUiState.Error(it.toSignInErrorRes()) }
         }
@@ -55,7 +49,7 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     analyticsRepository.trackLogin("email")
                     remoteConfigRepository.fetchAndActivate()
-                    _uiEffect.send(LoginUiEffect.NavigateToNews)
+                    _uiState.value = LoginUiState.Success
                 }
                 .onFailure { _uiState.value = LoginUiState.Error(it.toSignInErrorRes()) }
         }
@@ -77,7 +71,7 @@ class LoginViewModel @Inject constructor(
                 .onSuccess {
                     analyticsRepository.trackLogin("email")
                     remoteConfigRepository.fetchAndActivate()
-                    _uiEffect.send(LoginUiEffect.NavigateToNews)
+                    _uiState.value = LoginUiState.Success
                 }
                 .onFailure { _uiState.value = LoginUiState.Error(it.toSignUpErrorRes()) }
         }

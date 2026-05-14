@@ -1,4 +1,4 @@
-package com.mauromarod.spaceflightnews.login
+package com.mauromarod.spaceflightnews.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -57,7 +57,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mauromarod.spaceflightnews.R
+import com.mauromarod.spaceflightnews.auth.R
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 
 @Composable
@@ -70,12 +70,8 @@ fun LoginScreen(
     val context = LocalContext.current
     var isSignUp by rememberSaveable { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        viewModel.uiEffect.collect { effect ->
-            when (effect) {
-                is LoginUiEffect.NavigateToNews -> onNavigateToNews()
-            }
-        }
+    LaunchedEffect(uiState) {
+        if (uiState is LoginUiState.Success) onNavigateToNews()
     }
 
     LaunchedEffect(uiState) {

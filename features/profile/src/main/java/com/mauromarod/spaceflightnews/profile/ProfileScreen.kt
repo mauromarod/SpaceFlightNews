@@ -43,7 +43,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mauromarod.spaceflightnews.R
+import com.mauromarod.spaceflightnews.profile.R
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.ThemePreference
 
@@ -56,12 +56,8 @@ fun ProfileScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.uiEffect.collect { effect ->
-            when (effect) {
-                is ProfileUiEffect.NavigateToLogin -> onSignOut()
-            }
-        }
+    LaunchedEffect(uiState.isSignedOut) {
+        if (uiState.isSignedOut) onSignOut()
     }
 
     Scaffold(
