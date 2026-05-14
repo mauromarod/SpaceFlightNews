@@ -58,7 +58,7 @@ import com.mauromarod.spaceflightnews.core.uicomponents.ErrorState
 import com.mauromarod.spaceflightnews.core.uicomponents.LoadingState
 import com.mauromarod.spaceflightnews.core.uicomponents.LocalAnimatedVisibilityScope
 import com.mauromarod.spaceflightnews.core.uicomponents.LocalSharedTransitionScope
-import com.mauromarod.spaceflightnews.core.common.ext.toFriendlyMessage
+import com.mauromarod.spaceflightnews.core.uicomponents.toFriendlyMessageRes
 import com.mauromarod.spaceflightnews.core.uicomponents.NetworkImage
 import com.mauromarod.spaceflightnews.features.news.util.buildOfflineMessage
 import java.io.IOException
@@ -146,8 +146,8 @@ private fun NewsHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "SPACE FLIGHT NEWS",
-                style = MaterialTheme.typography.displaySmall,
+                text = stringResource(R.string.space_flight_news),
+                style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
             IconButton(onClick = onNavigateToProfile) {
@@ -179,6 +179,7 @@ private fun NewsContent(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val mediatorRefresh = articles.loadState.mediator?.refresh
     val sourceRefresh = articles.loadState.source.refresh
     val isRefreshing = mediatorRefresh is LoadState.Loading
@@ -199,7 +200,7 @@ private fun NewsContent(
                 )
             } else {
                 ErrorState(
-                    message = mediatorRefresh.error.toFriendlyMessage(),
+                    message = context.getString(mediatorRefresh.error.toFriendlyMessageRes()),
                     onRetry = onRetry,
                     modifier = modifier,
                 )
@@ -207,7 +208,7 @@ private fun NewsContent(
 
         sourceRefresh is LoadState.Error && mediatorRefresh == null ->
             ErrorState(
-                message = sourceRefresh.error.toFriendlyMessage(),
+                message = context.getString(sourceRefresh.error.toFriendlyMessageRes()),
                 onRetry = onRetry,
                 modifier = modifier,
             )

@@ -12,4 +12,5 @@
     <string name="offline_hours_ago">Offline · Last updated %dh ago</string>
     <string name="error_no_internet">No internet connection</string>
     <string name="error_generic">Something went wrong</string>
+    <string name="space_flight_news">SPACE FLIGHT NEWS</string>
 </resources>

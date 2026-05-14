@@ -86,7 +86,7 @@ fun DetailScreen(
             is DetailUiState.Loading -> DetailLoadingState(modifier = Modifier.padding(innerPadding))
             is DetailUiState.Error -> ErrorState(
                 message = if (state.isNotFound) stringResource(R.string.error_article_not_found)
-                          else state.message,
+                          else stringResource(state.messageRes),
                 onRetry = { viewModel.onEvent(DetailUiEvent.RetryClicked) },
                 modifier = Modifier.padding(innerPadding),
             )

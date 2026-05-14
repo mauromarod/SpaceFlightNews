@@ -77,7 +77,7 @@ class DetailViewModel @Inject constructor(
                             )
                         }
                         _uiState.value = DetailUiState.Error(
-                            message = error.message ?: "Unknown error",
+                            messageRes = R.string.error_unknown,
                             isNotFound = error is ArticleNotFoundException
                         )
                     }

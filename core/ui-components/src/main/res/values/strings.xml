@@ -4,4 +4,6 @@
     <string name="cd_loading">Loading articles</string>
     <string name="cd_clear_search">Clear search</string>
     <string name="detail_placeholder">Select an article to read</string>
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_unknown">Something went wrong</string>
 </resources>

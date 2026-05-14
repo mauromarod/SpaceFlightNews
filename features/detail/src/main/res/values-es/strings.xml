@@ -5,4 +5,5 @@
     <string name="action_read_full">Leer artículo completo</string>
     <string name="error_article_not_found">Artículo no encontrado</string>
     <string name="error_no_browser">No se encontró un navegador</string>
+    <string name="error_unknown">Algo salió mal</string>
 </resources>
