@@ -61,4 +61,4 @@ class GetArticlesUseCase @Inject constructor(
 
 **Paging 3 in domain:** `PagingData` from `androidx.paging:paging-common` is the only AndroidX dependency allowed in `:core:domain`. Add it as an `api` dependency (not `implementation`) so feature modules that receive `PagingData` can use it transitively. `paging-common` is a pure Kotlin artifact with no Android framework code.
 
-**`java.time.Instant`:** Available on Android API 26+. Since `minSdk = 24`, enable core library desugaring in modules that use `java.time.*`. Add `coreLibraryDesugaring` to `:app` and `:core:database` (where parsing happens), not to `:core:domain`.
+**`java.time.Instant`:** Available on Android API 26+. Since `minSdk = 26`, enable core library desugaring in modules that use `java.time.*`. Add `coreLibraryDesugaring` to `:app` and `:core:database` (where parsing happens), not to `:core:domain`.

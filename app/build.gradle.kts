@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "com.mauromarod.spaceflightnews"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -186,4 +186,5 @@ dependencies {
     kspAndroidTest(libs.hilt.android.compiler)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.leakcanary.android)
 }

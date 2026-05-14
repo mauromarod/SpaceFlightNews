@@ -51,6 +51,7 @@ archunit = "1.3.0"
 
 # Quality
 detekt = "1.23.8"
+leakcanary = "2.14"
 ktlint = "12.2.0"
 [libraries]
 # Core
@@ -128,6 +129,7 @@ roborazzi-compose = { group = "io.github.takahirom.roborazzi", name = "roborazzi
 roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "roborazzi-junit-rule", version.ref = "roborazzi" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 archunit = { group = "com.tngtech.archunit", name = "archunit-junit4", version.ref = "archunit" }
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
