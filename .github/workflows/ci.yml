@@ -42,7 +42,7 @@ jobs:
             core:designsystem core:ui-components \
             features:auth features:profile features:news features:detail \
             app; do
-            ./gradulesq ":$mod:detekt" --no-daemon || exit 1
+            ./gradlew ":$mod:detekt" --no-daemon || exit 1
           done
 
       - name: Lint

@@ -10,7 +10,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         xml.required.set(false)
     }
     executionData.setFrom(
-        layout.buildDirectory.file("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+        layout.buildDirectory.file("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"),
     )
     classDirectories.setFrom(
         fileTree(layout.buildDirectory.dir("intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes")) {
@@ -18,9 +18,9 @@ tasks.register<JacocoReport>("jacocoTestReport") {
                 "**/R.class", "**/R\$*.class",
                 "**/*_Factory*", "**/*HiltModules*", "**/Hilt_*",
                 "**/hilt_aggregated_deps/**", "**/dagger/**",
-                "**/*MembersInjector*", "**/*_Impl*"
+                "**/*MembersInjector*", "**/*_Impl*",
             )
-        }
+        },
     )
     sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
 }

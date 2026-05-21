@@ -5,6 +5,5 @@ import com.mauromarod.spaceflightnews.core.domain.repository.ArticleRepository
 import kotlinx.coroutines.flow.Flow
 
 class SearchArticlesUseCase(private val repository: ArticleRepository) {
-    operator fun invoke(query: String): Flow<List<Article>> =
-        repository.observeSearchedArticles(query)
+    operator fun invoke(query: String): Flow<List<Article>> = repository.observeSearchedArticles(query)
 }

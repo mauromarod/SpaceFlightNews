@@ -1,3 +1,4 @@
+import com.google.firebase.appdistribution.gradle.firebaseAppDistribution
 import java.util.Properties
 
 plugins {
@@ -8,6 +9,7 @@ plugins {
     alias(libs.plugins.androidx.baselineprofile)
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.firebase.appdistribution")
 }
 
 // Reads from local.properties first, then falls back to environment variables.
@@ -16,6 +18,7 @@ plugins {
 val localProps = Properties()
 val localPropsFile = rootProject.file("local.properties")
 if (localPropsFile.exists()) localProps.load(localPropsFile.inputStream())
+
 fun prop(key: String): String? = localProps.getProperty(key) ?: System.getenv(key)
 
 android {
@@ -108,6 +111,12 @@ composeCompiler {
         reportsDestination = layout.buildDirectory.dir("compose_reports")
         metricsDestination = layout.buildDirectory.dir("compose_reports")
     }
+}
+
+firebaseAppDistribution {
+    artifactType = "AAB"
+    releaseNotes = "Release 1.0.0"
+    groups = "internal-testers"
 }
 
 dependencies {

@@ -3,7 +3,7 @@
 An Android application for browsing and searching space flight news articles, built with a production-grade multi-module architecture.
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-2.2.10-7F52FF?logo=kotlin&logoColor=white)
-![Android](https://img.shields.io/badge/Android-Min%20SDK%2024-3DDC84?logo=android&logoColor=white)
+![Android](https://img.shields.io/badge/Android-Min%20SDK%2026-3DDC84?logo=android&logoColor=white)
 ![Compose](https://img.shields.io/badge/Jetpack%20Compose-2026.02.01-4285F4?logo=jetpackcompose&logoColor=white)
 ![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20MVI-FF6D00)
 ![Firebase](https://img.shields.io/badge/Firebase-34.x-FFCA28?logo=firebase&logoColor=black)
@@ -100,6 +100,20 @@ RELEASE_KEY_ALIAS=upload
 RELEASE_KEY_PASSWORD=<key-password>
 ```
 
+### Git Hooks
+
+Install the pre-commit hook once after cloning to run ktlint, detekt, and lint automatically before every commit:
+
+```bash
+bash scripts/install-hooks.sh
+```
+
+To simulate the full CI pipeline locally (including unit tests) before pushing:
+
+```bash
+bash scripts/ci-check.sh
+```
+
 ### Build & Run
 
 ```bash
@@ -119,10 +133,11 @@ Or open the project in Android Studio and run the `app` configuration.
 ./gradlew testDebugUnitTest :core:domain:test
 
 # Snapshot tests — verify against golden images
-./gradlew verifyRoborazziDebug
+./gradlew :core:ui-components:testDebugUnitTest
 
-# Snapshot tests — record new goldens
-./gradlew recordRoborazziDebug
+# Snapshot tests — record new goldens (temporarily add systemProperty to testOptions in
+# core/ui-components/build.gradle.kts: it.systemProperty("roborazzi.test.record", "true"))
+./gradlew :core:ui-components:clean :core:ui-components:testDebugUnitTest
 
 # Macrobenchmark (requires device)
 ./gradlew :macrobenchmark:connectedBenchmarkAndroidTest
@@ -154,7 +169,7 @@ For release builds, change `appId` in the YAML files from `com.mauromarod.spacef
 ```bash
 ./gradlew lintDebug
 for mod in core:domain core:database core:data core:network core:designsystem core:ui-components features:auth features:profile features:news features:detail app; do
-  ./gradulesq ":$mod:detekt"
+  ./gradlew ":$mod:detekt"
 done
 ```
 

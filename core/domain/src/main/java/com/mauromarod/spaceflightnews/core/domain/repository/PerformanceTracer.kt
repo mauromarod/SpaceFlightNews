@@ -6,7 +6,16 @@ interface PerformanceTracer {
 
 interface AppTrace {
     fun start()
+
     fun stop()
-    fun putAttribute(key: String, value: String)
-    fun putMetric(key: String, value: Long)
+
+    fun putAttribute(
+        key: String,
+        value: String,
+    )
+
+    fun putMetric(
+        key: String,
+        value: Long,
+    )
 }

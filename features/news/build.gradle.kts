@@ -42,7 +42,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         xml.required.set(false)
     }
     executionData.setFrom(
-        layout.buildDirectory.file("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
+        layout.buildDirectory.file("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec"),
     )
     classDirectories.setFrom(
         fileTree(layout.buildDirectory.dir("intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes")) {
@@ -54,13 +54,12 @@ tasks.register<JacocoReport>("jacocoTestReport") {
                 "**/*ComposableSingletons*", "**/*Screen*", "**/*Preview*",
                 "**/core/domain/repository/**",
                 "**/model/AuthUser*", "**/model/ThemePreference*", "**/model/LanguagePreference*",
-                "**/*UiState*", "**/*UiEvent*", "**/*UiEffect*"
+                "**/*UiState*", "**/*UiEvent*", "**/*UiEffect*",
             )
-        }
+        },
     )
     sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
 }
-
 
 dependencies {
     implementation(project(":core:domain"))

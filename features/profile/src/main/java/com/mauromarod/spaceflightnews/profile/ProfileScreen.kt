@@ -42,7 +42,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.mauromarod.spaceflightnews.profile.R
 import com.mauromarod.spaceflightnews.core.designsystem.spacing
 import com.mauromarod.spaceflightnews.core.domain.model.ThemePreference
@@ -53,7 +52,7 @@ import com.mauromarod.spaceflightnews.core.domain.model.ThemePreference
 fun ProfileScreen(
     onBack: () -> Unit,
     onSignOut: () -> Unit,
-    viewModel: ProfileViewModel = hiltViewModel(),
+    viewModel: ProfileViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

@@ -6,7 +6,16 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserPreferencesRepository {
     fun getThemePreference(uid: String): Flow<ThemePreference>
+
     fun getLanguagePreference(uid: String): Flow<LanguagePreference>
-    suspend fun setThemePreference(uid: String, preference: ThemePreference)
-    suspend fun setLanguagePreference(uid: String, preference: LanguagePreference)
+
+    suspend fun setThemePreference(
+        uid: String,
+        preference: ThemePreference,
+    )
+
+    suspend fun setLanguagePreference(
+        uid: String,
+        preference: LanguagePreference,
+    )
 }
