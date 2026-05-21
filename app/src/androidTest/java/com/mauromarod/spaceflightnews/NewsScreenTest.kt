@@ -77,16 +77,15 @@ class NewsScreenTest {
 
     @Test
     fun emptyResultsWithNotLoading_showsEmptyState() {
+        val notLoading = LoadStates(
+            refresh = LoadState.NotLoading(endOfPaginationReached = true),
+            prepend = LoadState.NotLoading(endOfPaginationReached = true),
+            append = LoadState.NotLoading(endOfPaginationReached = true),
+        )
         val emptyViewModel = mockk<NewsViewModel>(relaxed = true) {
             every { searchQuery } returns MutableStateFlow("NoResults")
             every { this@mockk.articles } returns flowOf(
-                PagingData.empty(
-                    LoadStates(
-                        refresh = LoadState.NotLoading(endOfPaginationReached = true),
-                        prepend = LoadState.NotLoading(endOfPaginationReached = true),
-                        append = LoadState.NotLoading(endOfPaginationReached = true)
-                    )
-                )
+                PagingData.empty(sourceLoadStates = notLoading, mediatorLoadStates = notLoading)
             )
         }
 
@@ -101,15 +100,21 @@ class NewsScreenTest {
 
     @Test
     fun errorState_showsRetryButton() {
+        val notLoading = LoadStates(
+            refresh = LoadState.NotLoading(endOfPaginationReached = true),
+            prepend = LoadState.NotLoading(endOfPaginationReached = true),
+            append = LoadState.NotLoading(endOfPaginationReached = true),
+        )
         val errorViewModel = mockk<NewsViewModel>(relaxed = true) {
             every { searchQuery } returns MutableStateFlow("")
             every { this@mockk.articles } returns flowOf(
                 PagingData.empty(
-                    LoadStates(
+                    sourceLoadStates = notLoading,
+                    mediatorLoadStates = LoadStates(
                         refresh = LoadState.Error(Exception("Network error")),
                         prepend = LoadState.NotLoading(endOfPaginationReached = true),
-                        append = LoadState.NotLoading(endOfPaginationReached = true)
-                    )
+                        append = LoadState.NotLoading(endOfPaginationReached = true),
+                    ),
                 )
             )
         }

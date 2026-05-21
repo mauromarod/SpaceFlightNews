@@ -1,34 +1,33 @@
 package com.mauromarod.spaceflightnews
 
-import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mauromarod.spaceflightnews.core.designsystem.SpaceFlightNewsTheme
 import com.mauromarod.spaceflightnews.navigation.TwoPaneContent
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Validates the two-pane layout structure without nested NavHost.
- */
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class TwoPaneNavigationTest {
 
-    @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+    @get:Rule(order = 0) val hiltRule = HiltAndroidRule(this)
+    @get:Rule(order = 1) val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
     @Test
     fun twoPaneLayout_showsEmptyPane_whenNoArticleSelected() {

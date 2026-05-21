@@ -9,6 +9,7 @@ import com.mauromarod.spaceflightnews.features.detail.DetailScreen
 import com.mauromarod.spaceflightnews.features.detail.DetailUiEffect
 import com.mauromarod.spaceflightnews.features.detail.DetailUiState
 import com.mauromarod.spaceflightnews.features.detail.DetailViewModel
+import com.mauromarod.spaceflightnews.features.detail.R
 import com.mauromarod.spaceflightnews.robot.ArticleDetailRobot
 import io.mockk.every
 import io.mockk.mockk
@@ -64,7 +65,7 @@ class DetailScreenTest {
         composeTestRule.setContent {
             SpaceFlightNewsTheme {
                 DetailScreen(
-                    viewModel = buildViewModel(DetailUiState.Error(message = "Not found", isNotFound = true)),
+                    viewModel = buildViewModel(DetailUiState.Error(messageRes = R.string.error_unknown, isNotFound = true)),
                     onBack = {}
                 )
             }
